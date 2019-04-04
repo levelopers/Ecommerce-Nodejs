@@ -27,7 +27,7 @@ router.post('/signin', function (req, res, next) {
   req.checkBody('username', 'Email is required').notEmpty();
   req.checkBody('username', 'Email is not valid').isEmail();
   req.checkBody('password', 'Password is required').notEmpty();
-  req.checkBody('password', 'Passwords have to match').equals(req.body.verifyPasswordField);
+  req.checkBody('password', 'Passwords have to match').equals(req.body.verifyPassword);
 
   var errors = req.validationErrors();
   if (errors) {
