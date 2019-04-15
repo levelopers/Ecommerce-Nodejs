@@ -5,37 +5,16 @@ var bodyParser = require('body-parser')
 var logger = require('morgan');
 var express = require('express');
 var mongoose = require('mongoose');
-var passport = require('passport');
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
 var expressValidator  = require('express-validator');//req.checkbody()
-var flash = require('connect-flash');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-mongoose.connect('mongodb://heroku_8bd94qrf:irstf0rv1ds970eebtislm0apf@ds029638.mlab.com:29638/heroku_8bd94qrf', { useNewUrlParser: true, useCreateIndex: true, });
+//mongodb://heroku_8bd94qrf:irstf0rv1ds970eebtislm0apf@ds029638.mlab.com:29638/heroku_8bd94qrf
+mongoose.connect('mongodb://localhost/yardAndGarage', { useNewUrlParser: true, useCreateIndex: true, });
 
 var app = express();
 
-// Express session
-app.use(session({
-  secret            : 'secret',
-  saveUninitialized : false,
-  resave            : false,
-  store             : new MongoStore({mongooseConnection: mongoose.connection}),
-  cookie            : {maxAge: 120 * 60 * 1000} // 2 hours later experies the session
-}));
-
-//pass session to redirect URL(before passport initialize)
-app.use(function(req, res, next) {
-  res.locals.session = req.session;
-  next();
-});
-
-// Passport initialize
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Express validator
 app.use(expressValidator({
@@ -54,18 +33,6 @@ app.use(expressValidator({
     };
   }
 }));
-
-// Flash Configuration for messages
-app.use(flash());
-
-// Flash - Global variables
-app.use(function(req, res, next){
-  res.locals.success_msg  = req.flash('success_msg');
-  res.locals.error_msg    = req.flash('error_msg');
-  res.locals.error        = req.flash('error'); // Pasport error message
-  res.locals.user         = req.user || null;
-  next();
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -94,8 +61,8 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(err.status || 500).send(err);
+  // res.render('error');
 });
 
 module.exports = app;

@@ -5,7 +5,7 @@
 
 var mongoose = require('mongoose');
 
-var productSchema  = mongoose.Schema({
+var productSchema = mongoose.Schema({
     imagePath: {
         type: String
     },
@@ -41,20 +41,25 @@ var Product = module.exports = mongoose.model('Product', productSchema);
 // without calling this functions but I just want to show you how you can add some functions
 // to your model file to get specific data.
 
-module.exports.getAllProducts = function(callback){
+module.exports.getAllProducts = function (callback) {
     Product.find(callback)
 }
 
-module.exports.getProductByID = function(id, callback){
+module.exports.getProductByID = function (id, callback) {
     Product.findById(id, callback);
 }
 
-module.exports.getProductByDepartment = function(department, callback){
-    var query = {department: department};
+module.exports.getProductByDepartment = function (department, callback) {
+    var query = { department: department };
     Product.find(query, callback);
 }
 
-module.exports.getProductByCategory = function(department, category, callback){
-    var query = {department: department, category: category};
+module.exports.getProductByCategory = function (category, callback) {
+    var query = { category: category };
+    Product.find(query, callback);
+}
+
+module.exports.getProductByDepartmentCategory = function (department, category, callback) {
+    var query = { department: department, category: category };
     Product.find(query, callback);
 }

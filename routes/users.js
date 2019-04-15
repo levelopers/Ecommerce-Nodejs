@@ -1,31 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken')
+const config = require('../configs/jwt-config')
+const ensureAuthenticated = require('../modules/ensureAuthenticated')
 const User = require('../models/User');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 var Cart = require('../models/Cart');
+let CartClass = require('../modules/Cart')
+const Product = require('../models/Product')
+const Variant = require('../models/Variant')
 
-//GET /login
-router.get('/login', function (req, res) {
-  let errors = res.locals.error //extract authenticate failure message
-  if (errors.length > 0) {
-    res.status(400).send({ errors })
-  } else {
-    res.send('login')
-  }
-});
-
-//GET /signin
-router.get('/signin', function (req, res) {
-  res.send('signin')
-});
 
 //POST /signin
 router.post('/signin', function (req, res, next) {
-  const { username, fullName, password, verifyPassword } = req.body
-  req.checkBody('fullName', 'Full name is required').notEmpty();
-  req.checkBody('username', 'Email is required').notEmpty();
-  req.checkBody('username', 'Email is not valid').isEmail();
+  const { fullname, email, password, verifyPassword } = req.body
+  req.checkBody('fullname', 'fullname is required').notEmpty();
+  req.checkBody('email', 'Email is required').notEmpty();
+  req.checkBody('email', 'Email is not valid').isEmail();
   req.checkBody('password', 'Password is required').notEmpty();
   req.checkBody('password', 'Passwords have to match').equals(req.body.verifyPassword);
 
@@ -37,101 +27,222 @@ router.post('/signin', function (req, res, next) {
     });
   } else {
     var newUser = new User({
-      username: username,
+      fullname: fullname,
       password: password,
-      fullname: fullName
+      email: email
     });
     User.createUser(newUser, function (err, user) {
       if (err) throw err;
     });
-    req.flash('success_msg', 'You are registered and you can login');
-    res.redirect('/users/login');
+    res.json({ message: 'You are registered and you can login' })
   }
-});
-
-
-//passport localstrategy
-passport.use(new LocalStrategy(function (username, password, done) {
-  User.getUserByUsername(username, function (err, user) {
-    if (err) throw err;
-    if (!user) {
-      return done(null, false, { message: 'Unknown User' });
-    }
-    User.comparePassword(password, user.password, function (err, isMatch) {
-      if (err) throw err;
-      if (isMatch) {
-        return done(null, user);
-      }
-      else {
-        return done(null, false, { message: 'Invalid password' });
-      }
-    });
-  });
-}));
-
-// Serialize user
-passport.serializeUser(function (user, done) {
-  done(null, user.id);
-});
-
-// Deserialize user
-passport.deserializeUser(function (id, done) {
-  User.getUserById(id, function (err, user) {
-    done(err, user);
-  });
 });
 
 //POST /login
-router.post('/login',
-  passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true }),
-  //pass authenticate
-  function (req, res, next) {
-    let uid = req.session.passport.user;
-    User.getUserById(uid, function (e, user) {
-      if (e) {
-        console.log("Failed on router.get('/login')\nError:".error, e.message.error + "\n")
-        e.status = 406; next(e);
-      }
-      else {
-        //initialize Cart
-        let cart = new Cart(user.cart ? user.cart : {});
-        req.session.cart = cart;
-        req.session.user = {} //clear user?
-        return res.redirect('/');
+router.post('/login', function (req, res, next) {
+  const { email, password } = req.body.credential
+  if (!email || !password) {
+    res.status(400).json({ message: "missing username or password" })
+  }
+  User.getUserByEmail(email, function (err, user) {
+    if (err) throw err
+    if (!user) {
+      res.status(403).json({ message: "Incorrect email or password" })
+    }
+    User.comparePassword(password, user.password, function (err, isMatch) {
+      if (err) throw err
+      if (isMatch) {
+        let token = jwt.sign(
+          { email: email },
+          config.secret,
+          { expiresIn: '1d' }
+        )
+        res.status(201).json({
+          user_token: {
+            user_id: user.id,
+            token: token,
+            expire_in: '1d'
+          }
+        })
+      } else {
+        res.status(403).json({ message: "Incorrect email or password" })
       }
     })
-  }
-)
-
-//GET /logout
-router.get('/logout', function (req, res, next) {
-  let uid = req.session.passport.user
-  let cart = req.session.cart
-  if (cart && cart.userId == uid) {
-    User.findOneAndUpdate({ "_id": uid }, //mongoose api
-      {
-        $set: {
-          "cart": req.session.cart
-        }
-      },
-      { new: true }, function (e, result) {
-        if (e) {
-          console.log("Failed on router.post('/logout')\nError:".error, e.message.error + "\n")
-          e.status = 406; next(e);
-        }
-        else {
-          req.logout();
-          req.flash('success_msg', 'You are logged out');
-          res.redirect('/');
-        }
-      });
-  }
-  else {
-    req.session.cart = null;
-    req.logout();
-    req.flash('success_msg', 'You are logged out');
-    res.redirect('/');
-  }
+  })
 })
+
+//GET cart
+router.get('/:userId/cart', ensureAuthenticated, function (req, res, next) {
+  let userId = req.params.userId
+  Cart.getCartByUserId(userId, function (err, cart) {
+    if (err) throw err
+    if (cart.length < 1) {
+      res.status(404).json({ message: "create a cart first" })
+    }
+    res.json({ cart: cart[0] })
+  })
+})
+
+//POST cart
+// req.body.cart
+// {
+//   "userId" : "5caf90b95d51a668344ba1e1",
+//     "product": {
+//     "productId": "5bedf5eec14d7822b39d9d4e",
+//       "color": "orange",
+//         "size": "M"
+//   }
+// }
+
+router.post('/:userId/cart', ensureAuthenticated, function (req, res, next) {
+  let userId = req.params.userId
+  let requestProduct = req.body.cart
+  let {productId} = requestProduct.product
+
+  console.log(requestProduct,productId);
+
+  Cart.getCartByUserId(userId, function (err, c) {
+    if (err) throw err
+    console.log(`c: \n${c}`);
+    
+    let oldCart = new CartClass(c)
+    Variant.getProductByID(productId, function (err, product) {
+      if (err) throw err
+      console.log(`product: \n${product}`);
+      
+      let newCart = oldCart.add(product, productId)
+      console.log(JSON.stringify(c));
+      
+      //exist cart in databse
+      if (c) {
+        Cart.updateCartByuserId(
+          userId,
+          {
+            items: newCart.items,
+            totalQty: newCart.totalQty,
+            totalPrice: newCart.totalPrice,
+            userId: userId
+          },
+          function (err, result) {
+            if (err) throw err
+            res.json(result)
+          })
+      } else {
+        //no cart in database
+        newCart = new Cart({
+          items: newCart.items,
+          totalQty: newCart.totalQty,
+          totalPrice: newCart.totalPrice,
+          userId: userId
+        })
+        Cart.createCart(newCart, function (err, c) {
+          if (err) throw err
+          res.status(201).json(c)
+        })
+      }
+    })
+  })
+
+
+})
+
+//PUT cart
+router.put('/:userId/cart', function (req, res, next) {
+  let userId = req.params.userId
+  let cart = req.body.cart
+  let productId = Object.keys(cart.items)[0]
+
+  Cart.getCartByUserId(userId, function (err, c) {
+    if (err) throw err
+    let oldCart
+    if (c.length > 0) {
+      oldCart = new CartClass(c[0])
+    } else {
+      oldCart = new CartClass({})
+    }
+    Product.getProductByID(productId, function (err, product) {
+      if (err) throw err
+      let newCart = oldCart.add(product, productId)
+      Cart.updateCartByuserId(
+        userId,
+        {
+          items: newCart.items,
+          totalQty: newCart.totalQty,
+          totalPrice: newCart.totalPrice,
+          userId: userId
+        },
+        function (err, result) {
+          if (err) throw err
+          res.json(result)
+        })
+    })
+  })
+
+
+})
+// db.carts
+// {
+// 	"_id" : ObjectId("5cafefa23e358c6d7669333b"),
+// 	"items" : {
+// 		"5bedf5eec14d7822b39d9d4e" : {
+// 			"item" : {
+// 				"_id" : "5bedf5eec14d7822b39d9d4e",
+// 				"imagePath" : "/uploads/1775300615_1_1_1.jpg",
+// 				"title" : "Perl Knit Swear",
+// 				"description" : "Purl-stitch knit sweater in a combination of textures. Ribbed trim.",
+// 				"price" : 79.99,
+// 				"color" : "Orange",
+// 				"size" : "M,L",
+// 				"quantity" : 8,
+// 				"department" : "Men",
+// 				"category" : "Knitwear",
+// 				"__v" : 0
+// 			},
+// 			"qty" : 0,
+// 			"price" : 79.99
+// 		}
+// 	},
+// 	"totalQty" : 9,
+// 	"totalPrice" : "401.92,",
+// 	"userId" : "5caf90b95d51a668344ba1e1",
+// 	"__v" : 0
+// }
+function calcuCart(requestCartObj, callback) {
+  const { userId } = requestCartObj
+  Cart.getCartByUserId(userId, function (err, cart) {
+    if (err) throw err
+    console.log(`calcuCart: \n${cart}`);
+
+    if (cart.length > 0) {
+      let { totalQty, totalPrice } = cart
+      for (let productId in requestCartObj.items) {
+        let { color, size, qty } = requestCartObj.items[productId]
+
+        //old cart dont have new cart product info
+        if (!cart.items[productId]) {
+          Product.getProductByID(productId, function (err, product) {
+            if (err) throw err
+            let { price } = product
+            let newPrice = qty * price
+            cart.items[productId]
+            totalQty += qty
+            totalPrice += newPrice
+          })
+        } else {
+          let price = cart.items[productId].item.price
+          let newPrice = qty * price
+          cart.items[productId].item.color = color
+          cart.items[productId].item.size = size
+          cart.items[productId].qty = qty
+          cart.items[productId].price = newPrice
+          totalQty += qty
+          totalPrice += newPrice
+        }
+      }
+      cart.totalQty = totalQty
+      cart.totalPrice = totalPrice
+    }
+  })
+}
 
 module.exports = router;
