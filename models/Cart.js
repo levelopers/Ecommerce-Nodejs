@@ -27,7 +27,7 @@ module.exports.getCartById = function(id,callback){
     Cart.findById(id,callback)
 }
 
-module.exports.updateCartByuserId = function(userId,newPropObj,callback){
+module.exports.updateCartByUserId = function(userId,newPropObj,callback){
     Cart.findOneAndUpdate(
         {userId:userId},
         {

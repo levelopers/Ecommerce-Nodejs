@@ -84,38 +84,24 @@ router.get('/:userId/cart', ensureAuthenticated, function (req, res, next) {
 })
 
 //POST cart
-// req.body.cart
-// {
-//   "userId" : "5caf90b95d51a668344ba1e1",
-//     "product": {
-//     "productId": "5bedf5eec14d7822b39d9d4e",
-//       "color": "orange",
-//         "size": "M"
-//   }
-// }
-
 router.post('/:userId/cart', ensureAuthenticated, function (req, res, next) {
   let userId = req.params.userId
-  let requestProduct = req.body.cart
-  let {productId} = requestProduct.product
-
-  console.log(requestProduct,productId);
+  let requestProduct = req.body
+  let { productId } = requestProduct.product
+  let { color, size } = requestProduct.product
 
   Cart.getCartByUserId(userId, function (err, c) {
     if (err) throw err
-    console.log(`c: \n${c}`);
-    
-    let oldCart = new CartClass(c)
-    Variant.getProductByID(productId, function (err, product) {
+    let oldCart = new CartClass(c[0] || {})
+    Product.getProductByID(productId, function (err, p) {
       if (err) throw err
-      console.log(`product: \n${product}`);
-      
-      let newCart = oldCart.add(product, productId)
-      console.log(JSON.stringify(c));
-      
+      // console.log(`oldCart: \n${JSON.stringify(oldCart)}\n`);
+      let newCart = oldCart.add(p, productId, { color, size })
+      // console.log(`newCart: \n${JSON.stringify(newCart)}\n`);
+
       //exist cart in databse
-      if (c) {
-        Cart.updateCartByuserId(
+      if (c.length > 0) {
+        Cart.updateCartByUserId(
           userId,
           {
             items: newCart.items,
@@ -135,50 +121,59 @@ router.post('/:userId/cart', ensureAuthenticated, function (req, res, next) {
           totalPrice: newCart.totalPrice,
           userId: userId
         })
-        Cart.createCart(newCart, function (err, c) {
+        Cart.createCart(newCart, function (err, resultCart) {
           if (err) throw err
-          res.status(201).json(c)
+          res.status(201).json(resultCart)
         })
       }
     })
   })
-
-
 })
 
 //PUT cart
 router.put('/:userId/cart', function (req, res, next) {
   let userId = req.params.userId
-  let cart = req.body.cart
-  let productId = Object.keys(cart.items)[0]
+  let requestProduct = req.body
+  let { productId, color, size } = requestProduct.product
 
   Cart.getCartByUserId(userId, function (err, c) {
     if (err) throw err
-    let oldCart
-    if (c.length > 0) {
-      oldCart = new CartClass(c[0])
-    } else {
-      oldCart = new CartClass({})
-    }
-    Product.getProductByID(productId, function (err, product) {
+    let oldCart = new CartClass(c[0] || {})
+    Product.getProductByID(productId, function (err, p) {
       if (err) throw err
-      let newCart = oldCart.add(product, productId)
-      Cart.updateCartByuserId(
-        userId,
-        {
+      // console.log(`oldCart: \n${JSON.stringify(oldCart)}\n`);
+      let newCart = oldCart.add(p, productId, { color, size })
+      // console.log(`newCart: \n${JSON.stringify(newCart)}\n`);
+
+      //exist cart in databse
+      if (c.length > 0) {
+        Cart.updateCartByUserId(
+          userId,
+          {
+            items: newCart.items,
+            totalQty: newCart.totalQty,
+            totalPrice: newCart.totalPrice,
+            userId: userId
+          },
+          function (err, result) {
+            if (err) throw err
+            res.json(result)
+          })
+      } else {
+        //no cart in database
+        newCart = new Cart({
           items: newCart.items,
           totalQty: newCart.totalQty,
           totalPrice: newCart.totalPrice,
           userId: userId
-        },
-        function (err, result) {
-          if (err) throw err
-          res.json(result)
         })
+        Cart.createCart(newCart, function (err, resultCart) {
+          if (err) throw err
+          res.status(201).json(resultCart)
+        })
+      }
     })
   })
-
-
 })
 // db.carts
 // {
@@ -207,42 +202,42 @@ router.put('/:userId/cart', function (req, res, next) {
 // 	"userId" : "5caf90b95d51a668344ba1e1",
 // 	"__v" : 0
 // }
-function calcuCart(requestCartObj, callback) {
-  const { userId } = requestCartObj
-  Cart.getCartByUserId(userId, function (err, cart) {
-    if (err) throw err
-    console.log(`calcuCart: \n${cart}`);
+// function calcuCart(requestCartObj, callback) {
+//   const { userId } = requestCartObj
+//   Cart.getCartByUserId(userId, function (err, cart) {
+//     if (err) throw err
+//     console.log(`calcuCart: \n${cart}`);
 
-    if (cart.length > 0) {
-      let { totalQty, totalPrice } = cart
-      for (let productId in requestCartObj.items) {
-        let { color, size, qty } = requestCartObj.items[productId]
+//     if (cart.length > 0) {
+//       let { totalQty, totalPrice } = cart
+//       for (let productId in requestCartObj.items) {
+//         let { color, size, qty } = requestCartObj.items[productId]
 
-        //old cart dont have new cart product info
-        if (!cart.items[productId]) {
-          Product.getProductByID(productId, function (err, product) {
-            if (err) throw err
-            let { price } = product
-            let newPrice = qty * price
-            cart.items[productId]
-            totalQty += qty
-            totalPrice += newPrice
-          })
-        } else {
-          let price = cart.items[productId].item.price
-          let newPrice = qty * price
-          cart.items[productId].item.color = color
-          cart.items[productId].item.size = size
-          cart.items[productId].qty = qty
-          cart.items[productId].price = newPrice
-          totalQty += qty
-          totalPrice += newPrice
-        }
-      }
-      cart.totalQty = totalQty
-      cart.totalPrice = totalPrice
-    }
-  })
-}
+//         //old cart dont have new cart product info
+//         if (!cart.items[productId]) {
+//           Product.getProductByID(productId, function (err, product) {
+//             if (err) throw err
+//             let { price } = product
+//             let newPrice = qty * price
+//             cart.items[productId]
+//             totalQty += qty
+//             totalPrice += newPrice
+//           })
+//         } else {
+//           let price = cart.items[productId].item.price
+//           let newPrice = qty * price
+//           cart.items[productId].item.color = color
+//           cart.items[productId].item.size = size
+//           cart.items[productId].qty = qty
+//           cart.items[productId].price = newPrice
+//           totalQty += qty
+//           totalPrice += newPrice
+//         }
+//       }
+//       cart.totalQty = totalQty
+//       cart.totalPrice = totalPrice
+//     }
+//   })
+// }
 
 module.exports = router;

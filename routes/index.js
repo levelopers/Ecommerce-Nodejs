@@ -11,7 +11,11 @@ var router = express.Router();
 router.get('/products', ensureAuthenticated, function (req, res, next) {
   let { department, category } = req.query
   if (!department && !category) {
+    console.log("enter /products");
+
     Product.getAllProducts(function (e, products) {
+      console.log(products);
+
       if (e) {
         console.log("Failed on router.get('/')\nError:".error, e.message.error + "\n")
         e.status = 406; next(e);
@@ -67,6 +71,33 @@ router.get('/variants/:id', ensureAuthenticated, function (req, res, next) {
       res.json({ variants })
     })
   }
+})
+
+//GET /search?
+router.get('/search', function (req, res, next) {
+  let query = req.query.query
+  Product.getProductByDepartment(query, function (err, p) {
+    if (err) throw err
+    if (p.length > 0) {
+      res.json({ products: p })
+    } else {
+      Product.getProductByCategory(query, function (err, p) {
+        if (err) throw err
+        if (p.length > 0) {
+          res.json({ products: p })
+        } else {
+          Product.getProductByID(query, function (err, p) {
+            if (err) throw err
+            if (p.length > 0) {
+              res.json({ products: p })
+            } else {
+              res.status(404).json({ message: "no product exist" })
+            }
+          })
+        }
+      })
+    }
+  })
 })
 
 function queryProducts(productDepartment, productCategory, res) {

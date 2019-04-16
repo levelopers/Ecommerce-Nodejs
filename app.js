@@ -6,12 +6,12 @@ var logger = require('morgan');
 var express = require('express');
 var mongoose = require('mongoose');
 var expressValidator  = require('express-validator');//req.checkbody()
-
+const mongoConfig = require('./configs/mongo-config')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 //mongodb://heroku_8bd94qrf:irstf0rv1ds970eebtislm0apf@ds029638.mlab.com:29638/heroku_8bd94qrf
-mongoose.connect('mongodb://localhost/yardAndGarage', { useNewUrlParser: true, useCreateIndex: true, });
+mongoose.connect(mongoConfig, { useNewUrlParser: true, useCreateIndex: true, });
 
 var app = express();
 
