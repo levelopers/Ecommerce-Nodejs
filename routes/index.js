@@ -1,9 +1,6 @@
 var express = require('express');
-const jwt = require('jsonwebtoken')
 const ensureAuthenticated = require('../modules/ensureAuthenticated')
 let Product = require('../models/Product')
-let Cart = require('../models/Cart')
-var Department = require('../models/Department');
 let Variant = require('../models/Variant')
 var router = express.Router();
 
@@ -11,11 +8,7 @@ var router = express.Router();
 router.get('/products', ensureAuthenticated, function (req, res, next) {
   let { department, category } = req.query
   if (!department && !category) {
-    console.log("enter /products");
-
     Product.getAllProducts(function (e, products) {
-      console.log(products);
-
       if (e) {
         console.log("Failed on router.get('/')\nError:".error, e.message.error + "\n")
         e.status = 406; next(e);

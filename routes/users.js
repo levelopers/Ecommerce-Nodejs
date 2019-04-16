@@ -92,39 +92,49 @@ router.post('/:userId/cart', ensureAuthenticated, function (req, res, next) {
 
   Cart.getCartByUserId(userId, function (err, c) {
     if (err) throw err
-    let oldCart = new CartClass(c[0] || {})
-    Product.getProductByID(productId, function (err, p) {
-      if (err) throw err
-      // console.log(`oldCart: \n${JSON.stringify(oldCart)}\n`);
-      let newCart = oldCart.add(p, productId, { color, size })
-      // console.log(`newCart: \n${JSON.stringify(newCart)}\n`);
+    let oldCart = new CartClass(c[0] || { userId })
 
-      //exist cart in databse
-      if (c.length > 0) {
-        Cart.updateCartByUserId(
-          userId,
-          {
-            items: newCart.items,
-            totalQty: newCart.totalQty,
-            totalPrice: newCart.totalPrice,
-            userId: userId
-          },
-          function (err, result) {
-            if (err) throw err
-            res.json(result)
+    Product.findById(productId, function (e, product) {
+      if (e) {
+        e.status = 406; next(e);
+      }
+      else {
+        // no variant applied
+        if (product) {
+          oldCart.add(product, product.id);
+          let newCart = oldCart.generateModel()
+          Cart.updateCartByUserId(
+            userId,
+            newCart,
+            function (err, result) {
+              if (err) throw err
+              res.json(result)
+            })
+        }
+        // apply variant
+        else {
+          Variant.getVariantByID(productId, function (e, variant) {
+            if (e) {
+              e.status = 406; next(e);
+            }
+            else {
+              Product.getProductByID(variant.productID, function (e, p) {
+                let color = (variant.color) ? "- " + variant.color : "";
+                variant.title = p.title + " " + color
+                variant.price = p.price
+                oldCart.add(variant, variant.id);
+                let newCart = oldCart.generateModel()
+                Cart.updateCartByUserId(
+                  userId,
+                  newCart,
+                  function (err, result) {
+                    if (err) throw err
+                    res.json(result)
+                  })
+              })
+            }
           })
-      } else {
-        //no cart in database
-        newCart = new Cart({
-          items: newCart.items,
-          totalQty: newCart.totalQty,
-          totalPrice: newCart.totalPrice,
-          userId: userId
-        })
-        Cart.createCart(newCart, function (err, resultCart) {
-          if (err) throw err
-          res.status(201).json(resultCart)
-        })
+        }
       }
     })
   })
@@ -175,69 +185,5 @@ router.put('/:userId/cart', function (req, res, next) {
     })
   })
 })
-// db.carts
-// {
-// 	"_id" : ObjectId("5cafefa23e358c6d7669333b"),
-// 	"items" : {
-// 		"5bedf5eec14d7822b39d9d4e" : {
-// 			"item" : {
-// 				"_id" : "5bedf5eec14d7822b39d9d4e",
-// 				"imagePath" : "/uploads/1775300615_1_1_1.jpg",
-// 				"title" : "Perl Knit Swear",
-// 				"description" : "Purl-stitch knit sweater in a combination of textures. Ribbed trim.",
-// 				"price" : 79.99,
-// 				"color" : "Orange",
-// 				"size" : "M,L",
-// 				"quantity" : 8,
-// 				"department" : "Men",
-// 				"category" : "Knitwear",
-// 				"__v" : 0
-// 			},
-// 			"qty" : 0,
-// 			"price" : 79.99
-// 		}
-// 	},
-// 	"totalQty" : 9,
-// 	"totalPrice" : "401.92,",
-// 	"userId" : "5caf90b95d51a668344ba1e1",
-// 	"__v" : 0
-// }
-// function calcuCart(requestCartObj, callback) {
-//   const { userId } = requestCartObj
-//   Cart.getCartByUserId(userId, function (err, cart) {
-//     if (err) throw err
-//     console.log(`calcuCart: \n${cart}`);
-
-//     if (cart.length > 0) {
-//       let { totalQty, totalPrice } = cart
-//       for (let productId in requestCartObj.items) {
-//         let { color, size, qty } = requestCartObj.items[productId]
-
-//         //old cart dont have new cart product info
-//         if (!cart.items[productId]) {
-//           Product.getProductByID(productId, function (err, product) {
-//             if (err) throw err
-//             let { price } = product
-//             let newPrice = qty * price
-//             cart.items[productId]
-//             totalQty += qty
-//             totalPrice += newPrice
-//           })
-//         } else {
-//           let price = cart.items[productId].item.price
-//           let newPrice = qty * price
-//           cart.items[productId].item.color = color
-//           cart.items[productId].item.size = size
-//           cart.items[productId].qty = qty
-//           cart.items[productId].price = newPrice
-//           totalQty += qty
-//           totalPrice += newPrice
-//         }
-//       }
-//       cart.totalQty = totalQty
-//       cart.totalPrice = totalPrice
-//     }
-//   })
-// }
 
 module.exports = router;
