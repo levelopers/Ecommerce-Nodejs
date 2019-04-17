@@ -120,7 +120,8 @@ router.post('/:userId/cart', ensureAuthenticated, function (req, res, next) {
             else {
               Product.getProductByID(variant.productID, function (e, p) {
                 let color = (variant.color) ? "- " + variant.color : "";
-                variant.title = p.title + " " + color
+                let size = (variant.size) ? "- " + variant.size : "";
+                variant.title = p.title + " " + color + size
                 variant.price = p.price
                 oldCart.add(variant, variant.id);
                 let newCart = oldCart.generateModel()
