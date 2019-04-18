@@ -5,6 +5,7 @@ var bodyParser = require('body-parser')
 var logger = require('morgan');
 var express = require('express');
 var mongoose = require('mongoose');
+var cors = require('cors')
 var expressValidator  = require('express-validator');//req.checkbody()
 const mongoConfig = require('./configs/mongo-config')
 var indexRouter = require('./routes/index');
@@ -17,7 +18,7 @@ mongoose.connect(mongoConfig, { useNewUrlParser: true, useCreateIndex: true, },f
 });
 
 var app = express()
-
+app.use(cors())
 
 // Express validator
 app.use(expressValidator({
