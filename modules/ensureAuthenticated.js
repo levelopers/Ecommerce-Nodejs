@@ -2,7 +2,10 @@ const jwt = require('jsonwebtoken')
 const config = require('../configs/jwt-config')
 
 function ensureAuthenticated(req, res, next) {
-  let token = req.headers['x-access-token'] || req.headers['authorization']
+  let token = ''
+  if (req.headers['x-access-token'] || req.headers['authorization']) {
+    token = req.headers['x-access-token'] || req.headers['authorization']
+  }
   //OAuth 2.0 framework 'bearer' token type
   if (token.startsWith('Bearer ')) {
     token = token.slice(7, token.length)
@@ -18,7 +21,6 @@ function ensureAuthenticated(req, res, next) {
         //bind on request
         // req.decoded = decoded
         console.log(`decoded: \n${JSON.stringify(decoded)}`);
-        
         next()
       }
     })
