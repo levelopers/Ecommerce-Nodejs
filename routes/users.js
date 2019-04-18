@@ -21,7 +21,7 @@ router.post('/signin', function (req, res, next) {
 
   var errors = req.validationErrors();
   if (errors) {
-    res.status(400).send({
+    res.status(400).json({
       errors: errors,
       title: 'Signin',
     });
