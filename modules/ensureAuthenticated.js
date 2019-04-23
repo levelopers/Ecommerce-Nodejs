@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const config = require('../configs/jwt-config')
-
+const TypedError = require('./ErrorHandler')
 function ensureAuthenticated(req, res, next) {
   let token = ''
   if (req.headers['x-access-token'] || req.headers['authorization']) {
@@ -13,10 +13,10 @@ function ensureAuthenticated(req, res, next) {
   if (token) {
     jwt.verify(token, config.secret, (err, decoded) => {
       if (err) {
-        console.log(err);
-        return res.json({
+        let err = new TypedError('token', 401, 'invalid_field', {
           message: "Token is not valid"
         })
+        return next(err)
       } else {
         //bind on request
         // req.decoded = decoded
@@ -25,9 +25,10 @@ function ensureAuthenticated(req, res, next) {
       }
     })
   } else {
-    return res.json({
-      message: "Auth token is not supplied"
+    let err = new TypedError('token', 401, 'invalid_field', {
+      message: "Token is not supplied"
     })
+    return next(err)
   }
 };
 

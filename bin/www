@@ -7,12 +7,13 @@
 var app = require('../app');
 var debug = require('debug')('myapp:server');
 var http = require('http');
+var PORT = process.argv[2]&&process.argv[2].slice(-4)
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || PORT || '3000');
 app.set('port', port);
 
 /**
@@ -86,7 +87,7 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-    console.log(`server listening on ${addr.port}`);
-    
+  console.log(`server listening on ${addr.port}`);
+
   debug('Listening on ' + bind);
 }

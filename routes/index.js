@@ -2,6 +2,9 @@ var express = require('express');
 const ensureAuthenticated = require('../modules/ensureAuthenticated')
 let Product = require('../models/Product')
 let Variant = require('../models/Variant')
+const Department = require('../models/Department')
+const Category = require('../models/Category')
+const TypedError = require('../modules/ErrorHandler')
 var router = express.Router();
 
 //GET /products
@@ -66,25 +69,44 @@ router.get('/variants/:id', ensureAuthenticated, function (req, res, next) {
   }
 })
 
+//GET /departments
+router.get('/departments', ensureAuthenticated, function (req, res, next) {
+  Department.getAllDepartments(function (err, d) {
+    if (err) throw err
+    res.status(200).json({ departments: d })
+  })
+})
+
+//GET /categories
+router.get('/categories', ensureAuthenticated, function (req, res, next) {
+  Category.getAllCategories(function (err, c) {
+    if (err) throw err
+    res.json({ categories: c })
+  })
+})
+
 //GET /search?
 router.get('/search', function (req, res, next) {
   let query = req.query.query
   Product.getProductByDepartment(query, function (err, p) {
-    if (err) throw err
+    if (err) return next(err)
     if (p.length > 0) {
       res.json({ products: p })
     } else {
       Product.getProductByCategory(query, function (err, p) {
-        if (err) throw err
+        if (err) return next(err)
         if (p.length > 0) {
           res.json({ products: p })
         } else {
           Product.getProductByID(query, function (err, p) {
-            if (err) throw err
-            if (p.length > 0) {
+            let error = new TypedError('search', 404, 'not_found', { message: "no product exist" })
+            if (err) {
+              return next(error)
+            } 
+            if (p) {
               res.json({ products: p })
             } else {
-              res.status(404).json({ message: "no product exist" })
+              return next(error)
             }
           })
         }

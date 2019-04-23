@@ -8,6 +8,7 @@ var Cart = require('../models/Cart');
 let CartClass = require('../modules/Cart')
 const Product = require('../models/Product')
 const Variant = require('../models/Variant')
+const TypedError = require('../modules/ErrorHandler')
 
 
 //POST /signin
@@ -15,39 +16,56 @@ router.post('/signin', function (req, res, next) {
   const { fullname, email, password, verifyPassword } = req.body
   req.checkBody('fullname', 'fullname is required').notEmpty();
   req.checkBody('email', 'Email is required').notEmpty();
-  req.checkBody('email', 'Email is not valid').isEmail();
   req.checkBody('password', 'Password is required').notEmpty();
+  req.checkBody('verifyPassword', 'verifyPassword is required').notEmpty();
+  let missingFieldErrors = req.validationErrors();
+  if (missingFieldErrors) {
+    let err = new TypedError('signin error', 400, 'missing_field', {
+      errors: missingFieldErrors,
+    })
+    return next(err)
+  }
+  req.checkBody('email', 'Email is not valid').isEmail();
   req.checkBody('password', 'Passwords have to match').equals(req.body.verifyPassword);
-
-  var errors = req.validationErrors();
-  if (errors) {
-    res.status(400).json({
-      errors: errors,
-      title: 'Signin',
-    });
-  } else {
-    var newUser = new User({
-      fullname: fullname,
-      password: password,
-      email: email
-    });
+  let invalidFieldErrors = req.validationErrors()
+  if (invalidFieldErrors) {
+    let err = new TypedError('signin error', 400, 'invalid_field', {
+      errors: invalidFieldErrors,
+    })
+    return next(err)
+  }
+  var newUser = new User({
+    fullname: fullname,
+    password: password,
+    email: email
+  });
+  User.getUserByEmail(email, function (error, user) {
+    if (error) throw error
+    if (user) {
+      let err = new TypedError('signin error', 409, 'invalid_field', {
+        message: "user is existed"
+      })
+      return next(err)
+    }
     User.createUser(newUser, function (err, user) {
       if (err) throw err;
+      res.json({ message: 'user created' })
     });
-    res.json({ message: 'You are registered and you can login' })
-  }
+  })
 });
 
 //POST /login
 router.post('/login', function (req, res, next) {
   const { email, password } = req.body.credential
   if (!email || !password) {
-    res.status(400).json({ message: "missing username or password" })
+    let err = new TypedError('login error', 400, 'missing_field', { message: "missing username or password" })
+    return next(err)
   }
   User.getUserByEmail(email, function (err, user) {
     if (err) throw err
     if (!user) {
-      res.status(403).json({ message: "Incorrect email or password" })
+      let err = new TypedError('login error', 403, 'invalid_field', { message: "Incorrect email or password" })
+      return next(err)
     }
     User.comparePassword(password, user.password, function (err, isMatch) {
       if (err) throw err
@@ -60,12 +78,14 @@ router.post('/login', function (req, res, next) {
         res.status(201).json({
           user_token: {
             user_id: user.id,
+            user_name: user.fullname,
             token: token,
             expire_in: '1d'
           }
         })
       } else {
-        res.status(403).json({ message: "Incorrect email or password" })
+        let err = new TypedError('login error', 403, 'invalid_field', { message: "Incorrect email or password" })
+        return next(err)
       }
     })
   })
@@ -77,7 +97,8 @@ router.get('/:userId/cart', ensureAuthenticated, function (req, res, next) {
   Cart.getCartByUserId(userId, function (err, cart) {
     if (err) throw err
     if (cart.length < 1) {
-      res.status(404).json({ message: "create a cart first" })
+      let err = new TypedError('cart error', 404, 'not_found', { message: "create a cart first" })
+      return next(err)
     }
     res.json({ cart: cart[0] })
   })
