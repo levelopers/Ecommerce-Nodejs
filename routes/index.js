@@ -13,8 +13,7 @@ router.get('/products', ensureAuthenticated, function (req, res, next) {
   if (!department && !category) {
     Product.getAllProducts(function (e, products) {
       if (e) {
-        console.log("Failed on router.get('/')\nError:".error, e.message.error + "\n")
-        e.status = 406; next(e);
+        if (err) return next(err)
       }
       else {
         res.json({ products: products })
@@ -43,19 +42,19 @@ router.get('/variants', ensureAuthenticated, function (req, res, next) {
   let { productId } = req.query
   if (productId) {
     Variant.getVariantProductByID(productId, function (err, variants) {
-      if (err) throw err
+      if (err) return next(err)
       return res.json({ variants })
     })
+  }else{
+    Variant.getAllVariants(function (e, variants) {
+      if (e) {
+        if (err) return next(err)
+      }
+      else {
+        return res.json({ variants })
+      }
+    })
   }
-  Variant.getAllVariants(function (e, variants) {
-    if (e) {
-      console.log("Failed on router.get('/')\nError:".error, e.message.error + "\n")
-      e.status = 406; next(e);
-    }
-    else {
-      res.json({ variants })
-    }
-  })
 })
 
 //GET /variants/:id
@@ -63,7 +62,7 @@ router.get('/variants/:id', ensureAuthenticated, function (req, res, next) {
   let id = req.params.id
   if (id) {
     Variant.getVariantByID(id, function (err, variants) {
-      if (err) throw err
+      if (err) return next(err)
       res.json({ variants })
     })
   }
@@ -72,7 +71,7 @@ router.get('/variants/:id', ensureAuthenticated, function (req, res, next) {
 //GET /departments
 router.get('/departments', ensureAuthenticated, function (req, res, next) {
   Department.getAllDepartments(function (err, d) {
-    if (err) throw err
+    if (err) return next(err)
     res.status(200).json({ departments: d })
   })
 })
@@ -80,7 +79,7 @@ router.get('/departments', ensureAuthenticated, function (req, res, next) {
 //GET /categories
 router.get('/categories', ensureAuthenticated, function (req, res, next) {
   Category.getAllCategories(function (err, c) {
-    if (err) throw err
+    if (err) return next(err)
     res.json({ categories: c })
   })
 })

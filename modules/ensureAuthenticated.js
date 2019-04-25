@@ -20,7 +20,7 @@ function ensureAuthenticated(req, res, next) {
       } else {
         //bind on request
         // req.decoded = decoded
-        console.log(`decoded: \n${JSON.stringify(decoded)}`);
+        // console.log(`decoded: \n${JSON.stringify(decoded)}`);
         next()
       }
     })
