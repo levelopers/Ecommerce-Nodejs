@@ -123,9 +123,6 @@ router.get('/search', function (req, res, next) {
 router.get('/checkout/:cartId', function (req, res, next) {
   const cartId = req.params.cartId
   const fullURL = req.protocol + '://' + req.get('host') + req.originalUrl
-  const rootURL = req.protocol + '://' + req.get('host')
-  console.log(rootURL);
-  
   Cart.getCartById(cartId, function (err, c) {
     if (err) return next(err)
     if (!c) {
@@ -148,8 +145,8 @@ router.get('/checkout/:cartId', function (req, res, next) {
         "payment_method": "paypal"
       },
       "redirect_urls": {
-        "return_url": rootURL+'/success_page',
-        "cancel_url": rootURL + '/cancel_page'
+        "return_url": fullURL + '/success',
+        "cancel_url": fullURL + '/cancel'
       },
       "transactions": [{
         "item_list": {
@@ -178,10 +175,6 @@ router.get('/checkout/:cartId', function (req, res, next) {
     });
   })
 })
-// GET /success_page
-router.get('/success_page', function (req, res, next) {
-  res.status(200).send({message:'payment success'})
-})
 
 //GET /checkout/cartId/success
 router.get('/checkout/:cartId/success', function (req, res, next) {
@@ -204,48 +197,48 @@ router.get('/checkout/:cartId/success', function (req, res, next) {
   })
 })
 
-function queryProducts(productDepartment, productCategory, res) {
-  if (productDepartment && productCategory) {
-    Product.getProductByDepartmentCategory(productDepartment, productCategory, function (e, products) {
-      if (e) {
-        e.status = 406; next(e);
-      }
-      else {
-        if (products.length < 1) {
-          res.status(404).json({ message: "get products fail" })
-        } else {
-          res.json({ products: products })
+  function queryProducts(productDepartment, productCategory, res) {
+    if (productDepartment && productCategory) {
+      Product.getProductByDepartmentCategory(productDepartment, productCategory, function (e, products) {
+        if (e) {
+          e.status = 406; next(e);
         }
-      }
-    })
-  } else if (productDepartment) {
-    Product.getProductByDepartment(productDepartment, function (e, products) {
-      if (e) {
-        e.status = 406; next(e);
-      }
-      else {
-        if (products.length < 1) {
-          res.status(404).json({ message: "get products fail" })
-        } else {
-          res.json({ products: products })
+        else {
+          if (products.length < 1) {
+            res.status(404).json({ message: "get products fail" })
+          } else {
+            res.json({ products: products })
+          }
         }
-      }
-    })
-  } else if (productCategory) {
-    Product.getProductByCategory(productCategory, function (e, products) {
-      if (e) {
-        e.status = 406; next(e);
-      }
-      else {
-        if (products.length < 1) {
-          res.status(404).json({ message: "get products fail" })
-        } else {
-          res.json({ products: products })
+      })
+    } else if (productDepartment) {
+      Product.getProductByDepartment(productDepartment, function (e, products) {
+        if (e) {
+          e.status = 406; next(e);
         }
-      }
-    })
+        else {
+          if (products.length < 1) {
+            res.status(404).json({ message: "get products fail" })
+          } else {
+            res.json({ products: products })
+          }
+        }
+      })
+    } else if (productCategory) {
+      Product.getProductByCategory(productCategory, function (e, products) {
+        if (e) {
+          e.status = 406; next(e);
+        }
+        else {
+          if (products.length < 1) {
+            res.status(404).json({ message: "get products fail" })
+          } else {
+            res.json({ products: products })
+          }
+        }
+      })
+    }
   }
-}
 
 
-module.exports = router;
+  module.exports = router;
