@@ -1,4 +1,4 @@
 //use your secret
 module.exports={
-  secret:"*******"
+  secret:"levelopers"
 }

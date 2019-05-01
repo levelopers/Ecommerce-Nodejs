@@ -1,11 +1,16 @@
 var express = require('express');
+var router = express.Router();
 const ensureAuthenticated = require('../modules/ensureAuthenticated')
-let Product = require('../models/Product')
-let Variant = require('../models/Variant')
+const Product = require('../models/Product')
+const Variant = require('../models/Variant')
 const Department = require('../models/Department')
 const Category = require('../models/Category')
 const TypedError = require('../modules/ErrorHandler')
-var router = express.Router();
+const Cart = require('../models/Cart');
+const CartClass = require('../modules/Cart')
+const paypal_config = require('../configs/paypal-config')
+const paypal = require('paypal-rest-sdk')
+
 
 //GET /products
 router.get('/products', ensureAuthenticated, function (req, res, next) {
@@ -45,7 +50,7 @@ router.get('/variants', ensureAuthenticated, function (req, res, next) {
       if (err) return next(err)
       return res.json({ variants })
     })
-  }else{
+  } else {
     Variant.getAllVariants(function (e, variants) {
       if (e) {
         if (err) return next(err)
@@ -101,7 +106,7 @@ router.get('/search', function (req, res, next) {
             let error = new TypedError('search', 404, 'not_found', { message: "no product exist" })
             if (err) {
               return next(error)
-            } 
+            }
             if (p) {
               res.json({ products: p })
             } else {
@@ -110,6 +115,91 @@ router.get('/search', function (req, res, next) {
           })
         }
       })
+    }
+  })
+})
+
+//GET /checkout
+router.get('/checkout/:cartId', function (req, res, next) {
+  const cartId = req.params.cartId
+  const fullURL = req.protocol + '://' + req.get('host') + req.originalUrl
+  const rootURL = req.protocol + '://' + req.get('host')
+  console.log(rootURL);
+  
+  Cart.getCartById(cartId, function (err, c) {
+    if (err) return next(err)
+    if (!c) {
+      let err = new TypedError('/checkout', 400, 'invalid_field', { message: 'cart not found' })
+      return next(err)
+    }
+    const items_arr = new CartClass(c).generateArray()
+    const paypal_list = []
+    for (const i of items_arr) {
+      paypal_list.push({
+        "name": i.item.title,
+        "price": i.item.price,
+        "currency": "CAD",
+        "quantity": i.qty
+      })
+    }
+    const create_payment_json = {
+      "intent": "sale",
+      "payer": {
+        "payment_method": "paypal"
+      },
+      "redirect_urls": {
+        "return_url": rootURL+'/success_page',
+        "cancel_url": rootURL + '/cancel_page'
+      },
+      "transactions": [{
+        "item_list": {
+          "items": paypal_list
+        },
+        "amount": {
+          "currency": "CAD",
+          "total": c.totalPrice
+        },
+        "description": "This is the payment description."
+      }]
+    }
+    paypal.configure(paypal_config);
+    paypal.payment.create(create_payment_json, function (error, payment) {
+      if (error) {
+        throw error;
+      } else {
+        console.log("Create Payment Response");
+        console.log(payment);
+        for (const link of payment.links) {
+          if (link.rel === 'approval_url') {
+            res.json(link.href)
+          }
+        }
+      }
+    });
+  })
+})
+// GET /success_page
+router.get('/success_page', function (req, res, next) {
+  res.status(200).send({message:'payment success'})
+})
+
+//GET /checkout/cartId/success
+router.get('/checkout/:cartId/success', function (req, res, next) {
+  var paymentId = req.query.paymentId;
+  var payerId = { payer_id: req.query.PayerID };
+
+  paypal.payment.execute(paymentId, payerId, function (error, payment) {
+    if (error) {
+      console.error(JSON.stringify(error));
+      return next(error)
+    } else {
+      if (payment.state == 'approved') {
+        console.log('payment completed successfully');
+        console.log(payment);
+        res.json(payment)
+      } else {
+        console.log('payment not successful');
+      }
     }
   })
 })

@@ -55,13 +55,13 @@ class Cart {
     return this
   }
 
-  // generateArray() {
-  //   let arr = [];
-  //   for (let id in this.items) {
-  //     arr.push(this.items[id])
-  //   }
-  //   return arr;
-  // }
+  generateArray() {
+    let arr = [];
+    for (let id in this.items) {
+      arr.push(this.items[id])
+    }
+    return arr;
+  }
 }
 
 module.exports = Cart
