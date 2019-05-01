@@ -122,7 +122,8 @@ router.get('/search', function (req, res, next) {
 //GET /checkout
 router.get('/checkout/:cartId', function (req, res, next) {
   const cartId = req.params.cartId
-  const fullURL = req.protocol + '://' + req.get('host') + req.originalUrl
+  // const fullURL = req.protocol + '://' + req.get('host') + req.originalUrl
+  const frontURL = 'https://zack-ecommerce-reactjs.herokuapp.com'
   Cart.getCartById(cartId, function (err, c) {
     if (err) return next(err)
     if (!c) {
@@ -145,8 +146,8 @@ router.get('/checkout/:cartId', function (req, res, next) {
         "payment_method": "paypal"
       },
       "redirect_urls": {
-        "return_url": fullURL + '/success',
-        "cancel_url": fullURL + '/cancel'
+        "return_url": frontURL + '/success',
+        "cancel_url": frontURL + '/cancel'
       },
       "transactions": [{
         "item_list": {
