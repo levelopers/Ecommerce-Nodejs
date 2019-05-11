@@ -185,7 +185,7 @@ router.post('/:userId/cart', ensureAuthenticated, function (req, res, next) {
 })
 
 //PUT cart
-router.put('/:userId/cart', function (req, res, next) {
+router.put('/:userId/cart', ensureAuthenticated, function (req, res, next) {
   let userId = req.params.userId
   let requestProduct = req.body
   let { productId, color, size } = requestProduct.product
