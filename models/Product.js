@@ -1,4 +1,3 @@
-
 var mongoose = require('mongoose');
 
 var productSchema = mongoose.Schema({
@@ -27,6 +26,9 @@ var productSchema = mongoose.Schema({
     type: String
   },
   quantity: {
+    type: Number
+  },
+  date: {
     type: Number
   }
 });

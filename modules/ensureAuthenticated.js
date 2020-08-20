@@ -19,8 +19,6 @@ function ensureAuthenticated(req, res, next) {
         return next(err)
       } else {
         //bind on request
-        // req.decoded = decoded
-        // console.log(`decoded: \n${JSON.stringify(decoded)}`);
         next()
       }
     })

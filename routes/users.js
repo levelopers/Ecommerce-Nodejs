@@ -108,7 +108,6 @@ router.get('/:userId/cart', ensureAuthenticated, function (req, res, next) {
 router.post('/:userId/cart', ensureAuthenticated, function (req, res, next) {
   let userId = req.params.userId
   let { productId, increase, decrease } = req.body
-  // let { color, size } = requestProduct.product
 
   Cart.getCartByUserId(userId, function (err, c) {
     if (err) return next(err)
@@ -195,9 +194,7 @@ router.put('/:userId/cart', ensureAuthenticated, function (req, res, next) {
     let oldCart = new CartClass(c[0] || {})
     Product.getProductByID(productId, function (err, p) {
       if (err) return next(err)
-      // console.log(`oldCart: \n${JSON.stringify(oldCart)}\n`);
       let newCart = oldCart.add(p, productId, { color, size })
-      // console.log(`newCart: \n${JSON.stringify(newCart)}\n`);
 
       //exist cart in databse
       if (c.length > 0) {

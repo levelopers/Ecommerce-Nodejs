@@ -5,8 +5,6 @@ var Product = require('../models/Product');
 var Variant = require('../models/Variant');
 var mongoose = require('mongoose');
 const mongoConfig = require('../configs/mongo-config')
-//mongoose.connect('mongodb://localhost/shoppingApp');
-//mongoose.connect('mongodb://localhost/myShoppingApp3', { useNewUrlParser: true, useCreateIndex: true, });
 mongoose.connect(mongoConfig, { useNewUrlParser: true, useCreateIndex: true, });
 
 
@@ -71,6 +69,7 @@ var products =
       quantity: 10,
       department: 'Women',
       category: 'Basics',
+      date:1581397200000
     }),
     new Product({
       _id: "5bedf3b9c14d7822b39d9d45",
@@ -83,6 +82,7 @@ var products =
       quantity: 15,
       department: 'Women',
       category: 'Basics',
+      date: 1597885814264
     }),
     new Product({
       _id: "5bedf448c14d7822b39d9d47",
@@ -95,6 +95,7 @@ var products =
       quantity: 90,
       department: 'Women',
       category: 'Basics',
+      date:1581397200000
     }),
     new Product({
       _id: "5bedf55bc14d7822b39d9d4b",
@@ -107,6 +108,7 @@ var products =
       quantity: 4,
       department: 'Women',
       category: 'Blazer',
+      date:1581397200000
     }),
     new Product({
       _id: "5bedf5eec14d7822b39d9d4e",
@@ -119,6 +121,7 @@ var products =
       quantity: 5,
       department: 'Men',
       category: 'Knitwear',
+      date: 1597885814264
     }),
     new Product({
       _id: "5bedf6b5c14d7822b39d9d51",
@@ -131,6 +134,7 @@ var products =
       quantity: 80,
       department: 'Men',
       category: 'Jeans',
+      date: 1597885814264
     }),
     new Product({
       _id: "5bedf720c14d7822b39d9d52",
@@ -143,6 +147,7 @@ var products =
       quantity: 8,
       department: 'Men',
       category: 'Jeans',
+      date:1581397200000
     }),
     new Product({
       _id: "5bedf7ecc14d7822b39d9d55",
@@ -155,6 +160,7 @@ var products =
       quantity: 12,
       department: 'Men',
       category: 'Jackets',
+      date:1581397200000
     })
   ];
 
