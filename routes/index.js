@@ -72,7 +72,7 @@ router.get('/variants/:id', ensureAuthenticated, function (req, res, next) {
 
 //GET /departments
 router.get('/departments', function (req, res, next) {
-  Department.getAllDepartments(function (err, d) {
+  Department.getAllDepartments(req.query, function (err, d) {
     if (err) return next(err)
     res.status(200).json({ departments: d })
   })

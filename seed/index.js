@@ -24,6 +24,12 @@ var categories =
     }),
     new Category({
       categoryName: 'Jackets'
+    }),
+    new Category({
+      categoryName: 'Girl'
+    }),
+    new Category({
+      categoryName: 'Boy'
     })
   ]
 
@@ -45,6 +51,10 @@ var departments =
     new Department({
       departmentName: 'Men',
       categories: 'Knitwear,Jeans,Jackets'
+    }),
+    new Department({
+      departmentName: 'Kids',
+      categories: 'Girl,Boy'
     })
   ]
 
@@ -69,7 +79,7 @@ var products =
       quantity: 10,
       department: 'Women',
       category: 'Basics',
-      date:1581397200000
+      date: 1581397200000
     }),
     new Product({
       _id: "5bedf3b9c14d7822b39d9d45",
@@ -95,7 +105,7 @@ var products =
       quantity: 90,
       department: 'Women',
       category: 'Basics',
-      date:1581397200000
+      date: 1581397200000
     }),
     new Product({
       _id: "5bedf55bc14d7822b39d9d4b",
@@ -108,7 +118,7 @@ var products =
       quantity: 4,
       department: 'Women',
       category: 'Blazer',
-      date:1581397200000
+      date: 1581397200000
     }),
     new Product({
       _id: "5bedf5eec14d7822b39d9d4e",
@@ -147,7 +157,7 @@ var products =
       quantity: 8,
       department: 'Men',
       category: 'Jeans',
-      date:1581397200000
+      date: 1581397200000
     }),
     new Product({
       _id: "5bedf7ecc14d7822b39d9d55",
@@ -160,8 +170,34 @@ var products =
       quantity: 12,
       department: 'Men',
       category: 'Jackets',
-      date:1581397200000
-    })
+      date: 1581397200000
+    }),
+    new Product({
+      _id: "5f3efb0d034bec1b28de7238",
+      imagePath: 'https://static.zara.net/photos///2020/I/0/3/p/0257/700/703/102/w/560/0257700703_2_10_1.jpg?ts=1596028794347',
+      title: 'SWEATSHIRT WITH TEXT',
+      description: 'Round neck sweatshirt with long sleeves. Front printed text.',
+      price: 16.90,
+      color: 'OYSTER WHITE',
+      size: 'XS,M',
+      quantity: 23,
+      department: 'Kids',
+      category: 'Girl',
+      date: 1597962874736
+    }),
+    new Product({
+      // _id: "5f3efb0d034bec1b28de7238",
+      imagePath: 'https://static.zara.net/photos///2020/I/0/3/p/3183/700/800/2/w/560/3183700800_1_1_1.jpg?ts=1597336424462',
+      title: 'PADDED BOMBER',
+      description: 'Quilted bomber jacket with round neck and long sleeves. Front hidden zip and snap button closure. Front pockets.',
+      price: 45.90,
+      color: 'BLACK ',
+      size: 'XS',
+      quantity: 23,
+      department: 'Kids',
+      category: 'Boy',
+      date: 1597962874736
+    }),
   ];
 
 for (let i = 0; i < products.length; i++) {
@@ -213,6 +249,13 @@ var variants =
       productID: '5bedf720c14d7822b39d9d52',
       imagePath: 'https://static.zara.net/photos///2018/I/0/2/p/5575/380/407/2/c-269-0-2048-3072/w/1920/5575380407_1_1_1.jpg?ts=1527602989905',
       color: 'Dark Blue',
+      size: 'M,XL',
+      quantity: 5,
+    }),
+    new Variant({
+      productID: '5f3efb0d034bec1b28de7238',
+      imagePath: 'https://static.zara.net/photos///2020/I/0/3/p/0257/700/800/102/w/560/0257700800_2_10_1.jpg?ts=1596028794110',
+      color: 'BLACK',
       size: 'M,XL',
       quantity: 5,
     })
