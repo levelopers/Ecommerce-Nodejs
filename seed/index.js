@@ -185,7 +185,7 @@ var products =
       category: 'Girl',
       date: 1597962874736
     }),
-    new Product({
+    /*new Product({
       // _id: "5f3efb0d034bec1b28de7238",
       imagePath: 'https://static.zara.net/photos///2020/I/0/3/p/3183/700/800/2/w/560/3183700800_1_1_1.jpg?ts=1597336424462',
       title: 'PADDED BOMBER',
@@ -197,7 +197,7 @@ var products =
       department: 'Kids',
       category: 'Boy',
       date: 1597962874736
-    }),
+    }),*/
   ];
 
 for (let i = 0; i < products.length; i++) {
