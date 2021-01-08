@@ -90,4 +90,5 @@ function onListening() {
   console.log(`server listening on ${addr.port}`);
 
   debug('Listening on ' + bind);
+  console.log("aaaaa");
 }
