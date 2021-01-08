@@ -3,8 +3,7 @@
   "version": "1.1.0",
   "private": true,
   "scripts": {
-    "start": "node server/server.js",
-    "postinstall": "ng build"
+    "start": "node server/server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
