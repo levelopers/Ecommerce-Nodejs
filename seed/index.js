@@ -11,25 +11,25 @@ mongoose.connect(mongoConfig, { useNewUrlParser: true, useCreateIndex: true, });
 var categories =
   [
     new Category({
-      categoryName: 'Basicos'
+      categoryName: 'Basics'
     }),
     new Category({
-      categoryName: 'Chaqueta'
+      categoryName: 'Blazer'
     }),
     new Category({
-      categoryName: 'Prendas de punto'
+      categoryName: 'Knitwear'
     }),
     new Category({
       categoryName: 'Jeans'
     }),
     new Category({
-      categoryName: 'Campera'
+      categoryName: 'Jackets'
     }),
     new Category({
-      categoryName: 'Niña'
+      categoryName: 'Girl'
     }),
     new Category({
-      categoryName: 'Niño'
+      categoryName: 'Boy'
     })
   ]
 
@@ -44,17 +44,17 @@ for (let i = 0; i < categories.length; i++) {
 var departments =
   [
     new Department({
-      departmentName: 'Mujeres',
-      categories: 'Basicos,Chaqueta'
+      departmentName: 'Women',
+      categories: 'Basics,Blazer'
 
     }),
     new Department({
-      departmentName: 'Varones',
-      categories: 'Prendas de punto,Jeans,Campera'
+      departmentName: 'Men',
+      categories: 'Knitwear,Jeans,Jackets'
     }),
     new Department({
-      departmentName: 'Niños',
-      categories: 'Niña,Niño'
+      departmentName: 'Kids',
+      categories: 'Girl,Boy'
     })
   ]
 
@@ -77,8 +77,8 @@ var products =
       color: 'Gray',
       size: 'XS,S,M',
       quantity: 10,
-      department: 'Mujeres',
-      category: 'Basicos',
+      department: 'Women',
+      category: 'Basics',
       date: 1581397200000
     }),
     new Product({
@@ -90,8 +90,8 @@ var products =
       color: 'Black',
       size: 'XS,S,XL',
       quantity: 15,
-      department: 'Mujeres',
-      category: 'Basicos',
+      department: 'Women',
+      category: 'Basics',
       date: 1597885814264
     }),
     new Product({
@@ -103,21 +103,21 @@ var products =
       color: 'White',
       size: 'XS',
       quantity: 90,
-      department: 'Mujeres',
-      category: 'Basicos',
+      department: 'Women',
+      category: 'Basics',
       date: 1581397200000
     }),
     new Product({
       _id: "5bedf55bc14d7822b39d9d4b",
       imagePath: 'https://static.zara.net/photos///2018/I/0/1/p/8197/757/093/4/w/1920/8197757093_2_2_1.jpg?ts=1538393944729',
-      title: 'Belted Plaid Chaqueta',
-      description: 'Flowy Chaqueta with lapel collar and long sleeves. Self belt. Chest patch pockets and welt pockets at hip. Front double-breasted button closure.',
+      title: 'Belted Plaid Blazer',
+      description: 'Flowy blazer with lapel collar and long sleeves. Self belt. Chest patch pockets and welt pockets at hip. Front double-breasted button closure.',
       price: 79.99,
       color: 'Black',
       size: 'S,M,L',
       quantity: 4,
-      department: 'Mujeres',
-      category: 'Chaqueta',
+      department: 'Women',
+      category: 'Blazer',
       date: 1581397200000
     }),
     new Product({
@@ -129,8 +129,8 @@ var products =
       color: 'Orange',
       size: 'M,L',
       quantity: 5,
-      department: 'Varones',
-      category: 'Prendas de punto',
+      department: 'Men',
+      category: 'Knitwear',
       date: 1597885814264
     }),
     new Product({
@@ -142,7 +142,7 @@ var products =
       color: 'Dark Blue',
       size: 'M,L',
       quantity: 80,
-      department: 'Varones',
+      department: 'Men',
       category: 'Jeans',
       date: 1597885814264
     }),
@@ -155,7 +155,7 @@ var products =
       color: 'Light Blue',
       size: 'XS,S,M',
       quantity: 8,
-      department: 'Varones',
+      department: 'Men',
       category: 'Jeans',
       date: 1581397200000
     }),
@@ -168,8 +168,8 @@ var products =
       color: 'Brown',
       size: 'XS,M,XL',
       quantity: 12,
-      department: 'Varones',
-      category: 'Campera',
+      department: 'Men',
+      category: 'Jackets',
       date: 1581397200000
     }),
     new Product({
@@ -181,11 +181,11 @@ var products =
       color: 'OYSTER WHITE',
       size: 'XS,M',
       quantity: 23,
-      department: 'Niños',
-      category: 'Niña',
+      department: 'Kids',
+      category: 'Girl',
       date: 1597962874736
     }),
-    new Product({
+    /*new Product({
       // _id: "5f3efb0d034bec1b28de7238",
       imagePath: 'https://static.zara.net/photos///2020/I/0/3/p/3183/700/800/2/w/560/3183700800_1_1_1.jpg?ts=1597336424462',
       title: 'PADDED BOMBER',
@@ -194,10 +194,10 @@ var products =
       color: 'BLACK ',
       size: 'XS',
       quantity: 23,
-      department: 'Niños',
-      category: 'Niño',
+      department: 'Kids',
+      category: 'Boy',
       date: 1597962874736
-    }),
+    }),*/
   ];
 
 for (let i = 0; i < products.length; i++) {
