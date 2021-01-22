@@ -4,8 +4,9 @@ var Department = require('../models/Department');
 var Product = require('../models/Product');
 var Variant = require('../models/Variant');
 var mongoose = require('mongoose');
-const mongoConfig = require('../configs/mongo-config')
-mongoose.connect(mongoConfig, { useNewUrlParser: true, useCreateIndex: true, });
+//const mongoConfig = require('../configs/mongo-config')
+require('dotenv').config({path:'variables.env'});
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useCreateIndex: true, });
 
 
 var categories =
