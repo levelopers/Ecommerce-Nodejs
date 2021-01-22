@@ -7,11 +7,11 @@ var express = require('express');
 var mongoose = require('mongoose');
 var cors = require('cors')
 var expressValidator  = require('express-validator');//req.checkbody()
-//const mongoConfig = require('./configs/mongo-config')
+const mongoConfig = require('./configs/mongo-config')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 require('dotenv').config({path:'variables.env'});
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useCreateIndex: true, },function(error){
+mongoose.connect(mongoConfig, { useNewUrlParser: true, useCreateIndex: true, },function(error){
   if(error) throw error
     console.log(`connect mongodb success`);
 });
