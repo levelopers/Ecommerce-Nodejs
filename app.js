@@ -10,7 +10,7 @@ var expressValidator  = require('express-validator');//req.checkbody()
 const mongoConfig = require('./configs/mongo-config')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+require('dotenv').config({path:'variables.env'});
 mongoose.connect(mongoConfig, { useNewUrlParser: true, useCreateIndex: true, },function(error){
   if(error) throw error
     console.log(`connect mongodb success`);
@@ -62,5 +62,4 @@ app.use(function(err, req, res, next) {
   // console.log(err);
   res.status(err.status || 500).json(err);
 });
-
 module.exports = app;

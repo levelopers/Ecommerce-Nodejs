@@ -11,25 +11,25 @@ mongoose.connect(mongoConfig, { useNewUrlParser: true, useCreateIndex: true, });
 var categories =
   [
     new Category({
-      categoryName: 'Basics'
+      categoryName: 'Basicos'
     }),
     new Category({
-      categoryName: 'Blazer'
+      categoryName: 'Chaqueta'
     }),
     new Category({
-      categoryName: 'Knitwear'
+      categoryName: 'Prendas de punto'
     }),
     new Category({
       categoryName: 'Jeans'
     }),
     new Category({
-      categoryName: 'Jackets'
+      categoryName: 'Campera'
     }),
     new Category({
-      categoryName: 'Girl'
+      categoryName: 'Niña'
     }),
     new Category({
-      categoryName: 'Boy'
+      categoryName: 'Niño'
     })
   ]
 
@@ -44,17 +44,17 @@ for (let i = 0; i < categories.length; i++) {
 var departments =
   [
     new Department({
-      departmentName: 'Women',
-      categories: 'Basics,Blazer'
+      departmentName: 'Mujeres',
+      categories: 'Basicos,Chaqueta'
 
     }),
     new Department({
-      departmentName: 'Men',
-      categories: 'Knitwear,Jeans,Jackets'
+      departmentName: 'Varones',
+      categories: 'Prendas de punto,Jeans,Campera'
     }),
     new Department({
-      departmentName: 'Kids',
-      categories: 'Girl,Boy'
+      departmentName: 'Niños',
+      categories: 'Niña,Niño'
     })
   ]
 
@@ -77,8 +77,8 @@ var products =
       color: 'Gray',
       size: 'XS,S,M',
       quantity: 10,
-      department: 'Women',
-      category: 'Basics',
+      department: 'Mujeres',
+      category: 'Basicos',
       date: 1581397200000
     }),
     new Product({
@@ -90,8 +90,8 @@ var products =
       color: 'Black',
       size: 'XS,S,XL',
       quantity: 15,
-      department: 'Women',
-      category: 'Basics',
+      department: 'Mujeres',
+      category: 'Basicos',
       date: 1597885814264
     }),
     new Product({
@@ -103,21 +103,21 @@ var products =
       color: 'White',
       size: 'XS',
       quantity: 90,
-      department: 'Women',
-      category: 'Basics',
+      department: 'Mujeres',
+      category: 'Basicos',
       date: 1581397200000
     }),
     new Product({
       _id: "5bedf55bc14d7822b39d9d4b",
       imagePath: 'https://static.zara.net/photos///2018/I/0/1/p/8197/757/093/4/w/1920/8197757093_2_2_1.jpg?ts=1538393944729',
-      title: 'Belted Plaid Blazer',
-      description: 'Flowy blazer with lapel collar and long sleeves. Self belt. Chest patch pockets and welt pockets at hip. Front double-breasted button closure.',
+      title: 'Belted Plaid Chaqueta',
+      description: 'Flowy Chaqueta with lapel collar and long sleeves. Self belt. Chest patch pockets and welt pockets at hip. Front double-breasted button closure.',
       price: 79.99,
       color: 'Black',
       size: 'S,M,L',
       quantity: 4,
-      department: 'Women',
-      category: 'Blazer',
+      department: 'Mujeres',
+      category: 'Chaqueta',
       date: 1581397200000
     }),
     new Product({
@@ -129,8 +129,8 @@ var products =
       color: 'Orange',
       size: 'M,L',
       quantity: 5,
-      department: 'Men',
-      category: 'Knitwear',
+      department: 'Varones',
+      category: 'Prendas de punto',
       date: 1597885814264
     }),
     new Product({
@@ -142,7 +142,7 @@ var products =
       color: 'Dark Blue',
       size: 'M,L',
       quantity: 80,
-      department: 'Men',
+      department: 'Varones',
       category: 'Jeans',
       date: 1597885814264
     }),
@@ -155,7 +155,7 @@ var products =
       color: 'Light Blue',
       size: 'XS,S,M',
       quantity: 8,
-      department: 'Men',
+      department: 'Varones',
       category: 'Jeans',
       date: 1581397200000
     }),
@@ -168,8 +168,8 @@ var products =
       color: 'Brown',
       size: 'XS,M,XL',
       quantity: 12,
-      department: 'Men',
-      category: 'Jackets',
+      department: 'Varones',
+      category: 'Campera',
       date: 1581397200000
     }),
     new Product({
@@ -181,8 +181,8 @@ var products =
       color: 'OYSTER WHITE',
       size: 'XS,M',
       quantity: 23,
-      department: 'Kids',
-      category: 'Girl',
+      department: 'Niños',
+      category: 'Niña',
       date: 1597962874736
     }),
     new Product({
@@ -194,8 +194,8 @@ var products =
       color: 'BLACK ',
       size: 'XS',
       quantity: 23,
-      department: 'Kids',
-      category: 'Boy',
+      department: 'Niños',
+      category: 'Niño',
       date: 1597962874736
     }),
   ];

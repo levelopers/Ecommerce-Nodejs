@@ -13,7 +13,7 @@ var PORT = process.argv[2]&&process.argv[2].slice(-4)
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || PORT || '3000');
+var port = normalizePort(process.env.PORT || PORT || '4000');
 app.set('port', port);
 
 /**
