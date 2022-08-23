@@ -79,7 +79,7 @@ var products =
       quantity: 10,
       department: 'Women',
       category: 'Basics',
-      date: 1581397200000
+      date: 15813972000
     }),
     new Product({
       _id: "5bedf3b9c14d7822b39d9d45",
