@@ -1,0 +1,29 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - staging
+
+jobs:
+  buildAndTest:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [1.1.0]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Dependencies
+        run: npm
+
+      - name: Build
+        run: npm build
+
+      - name: Test
+        run: npm test --watchAll=false
