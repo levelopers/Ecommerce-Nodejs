@@ -2,7 +2,6 @@ name: Continuous Integration/Continuous Deployment
 
 on:
   push:
-  pull:
     branches:
       - master
       - develop
