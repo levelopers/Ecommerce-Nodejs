@@ -1,7 +1,9 @@
 pipeline {
-  agent any
-    
-  tools {nodejs '7.7.3'}
+  agent {
+        docker {
+            image 'node:lts-bullseye-slim' 
+            args '-p 3000:3000' 
+        }
     
   stages {
         
