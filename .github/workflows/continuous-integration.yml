@@ -2,6 +2,7 @@ name: Continuous Integration/Continuous Deployment
 
 on:
   push:
+  pull:
     branches:
       - master
       - develop
@@ -14,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
+        node-version: [16.x]
 
     steps:
       - uses: actions/checkout@v1
@@ -26,6 +27,12 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build --if-present
-     # - run: npm test
+    
+    name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: us-east-1
 
    
