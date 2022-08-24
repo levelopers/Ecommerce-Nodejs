@@ -13,19 +13,22 @@ pipeline {
       }
     }
      
-    stage('Building Source Code') {
-      steps {
-        sh 'npm install'
+    // stage('Building Source Code') {
+    //   steps {
+    //     sh 'npm install'
        
-      }
-    } 
+    //   }
+    // } 
 
-    stage('Build') {
-      steps {
-        sh 'npm build'
-       
-      }
-    } 
+    stage ('Build') {
+        //env.PATH = "/opt/jenkins/bin:${env.PATH}"
+        catchError {
+            // Install dependencies
+            sh 'npm install'
+            // Build assets with eg. webpack 
+            sh 'npm run build'
+    }
+  }
     
   }
 }
