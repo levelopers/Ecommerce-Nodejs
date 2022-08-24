@@ -1,65 +1,31 @@
-name: Deploy Nodejs-app on AWS Elastic Beanstalk
-
-env:
-  APP_NAME: tls-ecommerce-app
-  S3_BUCKET: tls-ecommerce-app-bucket
-  AWS_REGION: us-east-1
-  AWS_PLATFORM: Docker
-  PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
+name: Continuous Integration/Continuous Deployment
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - master
+      - develop
+      - staging
 
 jobs:
-  create_eb_version:
+  buildAndTest:
+    name: Build and Test
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Configure AWS credentials 
-        uses: aws-actions/configure-aws-credentials@v1
+      - uses: actions/checkout@v1
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-      - run: |
-          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
 
-          echo "Creating Source Bundle"
-          zip -r ${{env.APP_NAME}}.zip app.js Dockerfile dockerignore package.json
-          S3_KEY="$AWS_VERSION_LABEL.zip"
-
-          echo "Uploading Source Bundle to S3"
-          aws s3 cp ${{env.APP_NAME}}.zip s3://${{env.S3_BUCKET}}/${S3_KEY} --region ${{env.AWS_REGION}}
-
-          echo "Creating Elastic Beanstalk version"
-          aws elasticbeanstalk create-application-version --application-name ${{env.APP_NAME}} --version-label $AWS_VERSION_LABEL --region ${{env.AWS_REGION}} --source-bundle S3Bucket=${{env.S3_BUCKET}},S3Key=${S3_KEY} --auto-create-application
-
-  deploy_aws:
-    needs: [create_eb_version]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.6 (needed for eb cli)
-        uses: actions/setup-python@v1
-        with:
-          python-version: "3.6"
-      - name: Configure AWS credentials 
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-id: ${{ secrets.AWS_ID }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-      - run: |
-          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
-
-          echo "Installing Elastic Beanstalk Cli"
-          python -m pip install --upgrade pip
-          pip install awsebcli --upgrade
-          eb --version
-
-          echo "Deploy init"
-          eb init -i ${{env.APP_NAME}} -p ${{env.AWS_PLATFORM}} -k ${{secrets.AWS_ID}} --region ${{env.AWS_REGION}}
-          eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
-          echo "Deploy finished"
+   
