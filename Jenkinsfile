@@ -1,7 +1,7 @@
 pipeline {
   agent any
     
-  tools {NodeJS Plugin}
+  tools {nodejs "latest"}
     
   stages {
         
