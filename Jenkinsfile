@@ -21,8 +21,8 @@ pipeline {
     // } 
 
     stage ('Build') {
-        //env.PATH = "/opt/jenkins/bin:${env.PATH}"
-        catchError {
+        
+        steps {
             // Install dependencies
             sh 'npm install'
             // Build assets with eg. webpack 
