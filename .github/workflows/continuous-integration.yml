@@ -1,4 +1,4 @@
-name: Deploy Node app on AWS Elastic Beanstalk
+name: Deploy Nodejs-app on AWS Elastic Beanstalk
 
 env:
   APP_NAME: tls-ecommerce-app
