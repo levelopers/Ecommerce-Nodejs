@@ -7,7 +7,7 @@ pipeline {
     
   stages {
         
-    stage('Fetch Code from Git') {
+    stage('Fetch Code from Github') {
       steps {
         git branch: 'master' url: 'https://github.com/QNNAKWUE/Ecommerce-Nodejs.git'
       }
