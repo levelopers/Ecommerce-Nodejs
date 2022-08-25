@@ -9,7 +9,7 @@ pipeline {
         
     stage('Fetch Code') { 
       steps {
-        git branch: 'master' url: 'https://github.com/QNNAKWUE/Ecommerce-Nodejs.git'
+        git branch: 'master', url: 'https://github.com/QNNAKWUE/Ecommerce-Nodejs.git'
       }
     }
      
@@ -18,11 +18,11 @@ pipeline {
         sh 'npm install'
       }
     }
-    // stage('Test') {
-    //   steps {
-    //     sh 'npm test'
-    //   }
-    // }
+    stage('Test') {
+      steps {
+        sh 'npm test'
+      }
+    }
      
     
   }
