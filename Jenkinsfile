@@ -11,12 +11,12 @@ pipeline {
       steps {
         git branch: 'master', url: 'https://github.com/QNNAKWUE/Ecommerce-Nodejs.git'
       }
-      post {
-        success {
-          echo "Now Archiving."
-          archiveArtifacts artifacts: '**/*.war' 
-        }
-      }
+      // post {
+      //   success {
+      //     echo "Now Archiving."
+      //     archiveArtifacts artifacts: '**/*.war' 
+      //   }
+      // }
     }
      
     stage('Build') {
