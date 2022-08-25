@@ -21,7 +21,7 @@ pipeline {
      
     stage('Build') {
       steps {
-        sh 'npm clean install'
+        sh 'npm install'
       }
     }
 
