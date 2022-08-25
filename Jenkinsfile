@@ -7,7 +7,7 @@ pipeline {
     
   stages {
         
-    stage('Git') {
+    stage('Checkout Code From Git') {
       steps {
         git 'https://github.com/QNNAKWUE/Ecommerce-Nodejs.git'
       }
