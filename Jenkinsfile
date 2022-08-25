@@ -21,7 +21,7 @@ pipeline {
      
     stage('Build') {
       steps {
-        sh 'npm clean install -DskipTests'
+        sh 'npm clean install'
       }
     }
 
