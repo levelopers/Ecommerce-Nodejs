@@ -36,6 +36,8 @@ pipeline {
     }
 }
 
+}
+
 // # Path parameters
 // export metric_id="n.name"
 
