@@ -14,7 +14,7 @@ env:
   ECR_REPOSITORY: MY_ECR_REPOSITORY           # set this to your Amazon ECR repository name                # set this to your Amazon ECS cluster name # set this to the path to your Amazon ECS task definition
                                                # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
-                                               # containerDefinitions section of your task definition
+                                               
 
 jobs:
   deploy:
