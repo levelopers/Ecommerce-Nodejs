@@ -1,25 +1,25 @@
-name: Node.js CI
+# name: Node.js CI
 
-on:
-  push:
-    branches: [ master, dev, staging ]
-  pull_request:
-    branches: [ master, dev, staging ]
+# on:
+#   push:
+#     branches: [ master, dev, staging ]
+#   pull_request:
+#     branches: [ master, dev, staging ]
 
-jobs:
-  build_and_test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [ 12.x ]
+# jobs:
+#   build_and_test:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         node: [ 12.x ]
     
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Setup node
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ matrix.node }}
+#           cache: 'npm'
+#       - run: npm ci
+#       - run: npm run build --if-present
+#       - run: npm test
