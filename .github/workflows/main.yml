@@ -4,7 +4,7 @@ env:
   EB_APPLICATION_NAME      : "myecommapp"
   EB_ENVIRONMENT_NAME      : "Myecommapp-env"
   DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
-  AWS_REGION_NAME           : "us-west-1"
+  AWS_REGION_NAME          : "us-west-1"
 
 on:
   push:
@@ -21,16 +21,16 @@ jobs:
     
     steps:
       - name: Git clone our repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v1
 
-      - name: Setup node 
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-          cache: 'npm'
-        run: npm ci
-        run: npm run build --if-present
-        run: npm test
+      # - name: Setup node 
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: ${{ matrix.node }}
+      #     cache: 'npm'
+      #   run: npm ci
+      #   run: npm run build --if-present
+      #   run: npm test
 
       - name: Create ZIP deployment package
         run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
@@ -47,6 +47,22 @@ jobs:
 
       - name: Print nice message on completion of CI Pipeline
         echo: "CI Pipeline part finished successfully"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
