@@ -1,5 +1,10 @@
 name: CI-CD-Pipeline-to-AWS-ElasticBeanStalk
 
+on:
+  push:
+    branches:
+      - master
+
 env:
   EB_PACKAGE_S3_BUCKET_NAME: "zzz-ecommerce-app"
   EB_APPLICATION_NAME      : "myecommapp"
@@ -7,13 +12,9 @@ env:
   DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
   AWS_REGION_NAME          : "us-west-1"
 
-on:
-  push:
-    branches:
-      - master
-
 jobs:
-  my_ci_pipeline:
+  deploy: 
+    name: my_ci_pipeline:
     runs-on: ubuntu-latest
 
     # strategy:
@@ -22,7 +23,7 @@ jobs:
     
     steps:
       - name: Git clone our repository
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
       # - name: Setup node 
       #   uses: actions/setup-node@v3
