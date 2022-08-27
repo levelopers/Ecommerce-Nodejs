@@ -15,9 +15,9 @@ jobs:
   my_ci_pipeline:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node: [ 12.x ]
+    # strategy:
+    #   matrix:
+    #     node: [ 12.x ]
     
     steps:
       - name: Git clone our repository
