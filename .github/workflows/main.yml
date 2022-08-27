@@ -9,7 +9,7 @@ env:
 on:
   push:
     branches:
-    - master
+      - master
 
 jobs:
   my_ci_pipeline:
@@ -21,16 +21,16 @@ jobs:
     
     steps:
       - name: Git clone our repository
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
       - name: Setup node 
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+        run: npm ci
+        run: npm run build --if-present
+        run: npm test
 
       - name: Create ZIP deployment package
         run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
