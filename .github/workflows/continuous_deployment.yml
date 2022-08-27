@@ -1,7 +1,7 @@
 name: Deploy to Amazon ECS
 
-run-on: ubuntu-latest
-needs: [continuous-integration]
+runs-on: ubuntu-latest
+needs: [continuous_integration]
 if: github.ref == 'refs/heads/master'
 
 on:
