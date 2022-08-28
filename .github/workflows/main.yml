@@ -45,7 +45,7 @@ jobs:
         environment_name: ${{ env.EB_ENVIRONMENT_NAME }}
         version_label: 12345
         region: us-west-1
-        deployment_package: deploy.zip
+        
 
     - name: Print nice message on completion of CI Pipeline
       run: echo "CI pipeline passed successfully"
