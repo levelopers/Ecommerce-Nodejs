@@ -13,7 +13,7 @@ on:
       - master
 
 jobs:
-  CD_to_ElasticBeanStalk:
+  Continuous_Delivery_to_ElasticBeanStalk:
     runs-on: ubuntu-latest
 
     steps:
