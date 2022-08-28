@@ -1,32 +1,32 @@
 name: CI-CD-Pipeline-to-AWS-ElasticBeanStalk
 
+env:
+  EB_PACKAGE_S3_BUCKET_NAME: "zzz-ecommerce-app"
+  EB_APPLICATION_NAME      : "myecommapp"
+  EB_ENVIRONMENT_NAME      : "Myecommapp-env"
+  DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
+  AWS_REGION_NAME          : "us-west-1"
+
 on:
   push:
     branches:
       - master
-
-# env:
-#   EB_PACKAGE_S3_BUCKET_NAME: "zzz-ecommerce-app"
-#   EB_APPLICATION_NAME      : "myecommapp"
-#   EB_ENVIRONMENT_NAME      : "Myecommapp-env"
-#   DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
-#   AWS_REGION_NAME          : "us-west-1"
 
 jobs:
   deploy: 
     name: my_ci_pipeline
     runs-on: ubuntu-latest
 
-    # strategy:
-    #   matrix:
-    #     node: [ 12.x ]
+    strategy:
+      matrix:
+        node: [ 12.x ]
     
     steps:
       - name: Git clone our repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Setup node 
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'npm'
