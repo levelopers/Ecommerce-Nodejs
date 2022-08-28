@@ -23,7 +23,7 @@ jobs:
     
     steps:
       - name: Git clone our repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Setup node 
         uses: actions/setup-node@v3
@@ -38,7 +38,7 @@ jobs:
         run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
 
       - name: Configure AWS Credentials
-        uses: aws-actions-configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3 
         with: 
            aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
            aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
