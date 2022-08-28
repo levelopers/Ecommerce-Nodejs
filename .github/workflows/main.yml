@@ -19,7 +19,7 @@ jobs:
     steps:
 
     - name: Checkout source code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v1
 
     - name: Generate deployment package
       run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
@@ -27,8 +27,8 @@ jobs:
     - name: Configure AWS Credential
       uses: aws-actions/configure-aws-credentials@v1
       with: 
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.MY_AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.MY_AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION_NAME }}
     
 
