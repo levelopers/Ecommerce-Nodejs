@@ -23,7 +23,7 @@ jobs:
     
     steps:
       - name: Git clone our repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v1
 
       - name: Setup node 
         uses: actions/setup-node@v3
