@@ -15,7 +15,7 @@ on:
 jobs:
   Continuous_Delivery_to_ElasticBeanStalk:
     runs-on: ubuntu-latest
-    needs: [Node.js CI]
+ 
 
     steps:
 
