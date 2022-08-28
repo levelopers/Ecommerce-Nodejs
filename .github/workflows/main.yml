@@ -36,19 +36,30 @@ jobs:
     - name: Copy our Deployment to S3 Bucket
       run: aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
 
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v20
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: ${{ env.EB_APPLICATION_NAME }}
+        environment_name: ${{ env.EB_ENVIRONMENT_NAME }}
+        version_label: 12345
+        region: us-west-1
+        deployment_package: deploy.zip
+
     - name: Print nice message on completion of CI Pipeline
       run: echo "CI pipeline passed successfully"
 
-    - name: Create new ElasticBeanstalk Application Version
-      run: |
-        aws elasticbeanstalk create-application-version \
-        --application-name ${{ env.EB_APPLICATION_NAME }} \
-        --source-bundle S3Bucket="${{ env.EB_PACKAGE_S3_BUCKET_NAME }}" ,S3key="${{env.DEPLOY_PACKAGE_NAME }}" \
-        --version-label "Ver-${{ github.sha }}" \
-        --description "CommitSHA-${{ github.sha }}"
+    # - name: Create new ElasticBeanstalk Application Version
+    #   run: |
+    #     aws elasticbeanstalk create-application-version \
+    #     --application-name ${{ env.EB_APPLICATION_NAME }} \
+    #     --source-bundle S3Bucket="${{ env.EB_PACKAGE_S3_BUCKET_NAME }}" ,S3key="${{env.DEPLOY_PACKAGE_NAME }}" \
+    #     --version-label "Ver-${{ github.sha }}" \
+    #     --description "CommitSHA-${{ github.sha }}"
 
-    - name: Deploy our new Application version
-      run: aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENVIRONMENT_NAME }} --version-label Ver-${{ github.sha }}"
+    # - name: Deploy our new Application version
+    #   run: aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENVIRONMENT_NAME }} --version-label Ver-${{ github.sha }}"
 
 
 
