@@ -27,12 +27,12 @@ jobs:
     - name: Configure AWS Credential
       uses: aws-actions/configure-aws-credentials@v1
       with: 
-        aws-access-key-id: ${{ secrets.MY_AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.MY_AWS_SECRET_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION_NAME }}
     
 
-    - name: Copy our Deployment to S3 Buckets
+    - name: Copy our Deployment to S3 Bucket
       run: aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
 
     - name: Print nice message on completion of CI Pipeline
@@ -41,8 +41,8 @@ jobs:
     - name: Deploy to Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v20
       with:
-        aws-access-key-id: ${{ secrets.MY_AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.MY_AWS_SECRET_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         EB_APPLICATION_NAME: "myecommapp"
         EB_ENVIRONMENT_NAME: "Myecommapp-env"
         DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
