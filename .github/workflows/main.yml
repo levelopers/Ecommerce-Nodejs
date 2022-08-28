@@ -1,7 +1,7 @@
 name: Deploy master
 
 env:
-  EB_PACKAGE_S3_BUCKET_NAME: "zzz-ecommerce-app"
+  EB_PACKAGE_S3_BUCKET_NAME: "elasticbeanstalk-us-west-1-794105936049"
   EB_APPLICATION_NAME      : "myecommapp"
   EB_ENVIRONMENT_NAME      : "Myecommapp-env"
   DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
