@@ -25,7 +25,7 @@ jobs:
       run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
 
     - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3 
+        uses: einaregilsson/beanstalk-deploy@v20
         with: 
            aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
            aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
