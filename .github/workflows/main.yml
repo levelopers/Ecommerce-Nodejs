@@ -27,8 +27,8 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with: 
-        aws_access_key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-key-id: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-key_id: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION_NAME }}
     
 
@@ -38,8 +38,8 @@ jobs:
     - name: Deploy to EB
       uses: einaregilsson/beanstalk-deploy@v20
       with:
-        aws_access_key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key-id: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key_id: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         application_name: "myecommapp"
         environment_name: "Myecommapp-env"
         DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
