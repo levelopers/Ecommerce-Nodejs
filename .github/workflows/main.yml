@@ -14,8 +14,7 @@ on:
 
 jobs:
   CD_to_EBS:
-    needs: build_and_test:
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
 
