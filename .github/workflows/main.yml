@@ -43,12 +43,12 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        EB_APPLICATION_NAME: "myecommapp"
-        EB_ENVIRONMENT_NAME: "Myecommapp-env"
-        DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
-        AWS_REGION_NAME       : "us-west-1" 
+        application_name: "myecommapp"
+        environment_name: "Myecommapp-env"
+        deployment_package:  "ecommerce-app-${{github.sha}}.zip"
+        region       : "us-west-1" 
 
-
+ 
 
 
 
