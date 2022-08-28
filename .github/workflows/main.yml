@@ -15,6 +15,7 @@ on:
 jobs:
   Continuous_Delivery_to_ElasticBeanStalk:
     runs-on: ubuntu-latest
+    needs: [Node.js CI]
 
     steps:
 
@@ -42,7 +43,7 @@ jobs:
       run: |
         aws elasticbeanstalk create-application-version \
         --application-name ${{ env.EB_APPLICATION_NAME }} \
-        --source-bundle S3Bucket="${{ env.EB_PACKAGE_S3_BUCKET_NAME }}",S3key="${{env.EB_PACKAGE_S3_BUCKET_NAME }}" \
+        --source-bundle S3Bucket="${{ env.EB_PACKAGE_S3_BUCKET_NAME }}",S3key="${{env.DEPLOY_PACKAGE_NAME }}" \
         --version-label "Ver-${{ github.sha }}" \
         --description "CommitSHA-${{ github.sha }}"
 
