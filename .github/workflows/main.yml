@@ -1,10 +1,8 @@
 name: CI-CD-Pipeline-to-AWS-ElasticBeanStalk
 
 env:
-  EB_PACKAGE_S3_BUCKET_NAME: "tjs-app"
   EB_APPLICATION_NAME      : "tjs-application"
   EB_ENVIRONMENT_NAME      : "tjsapplication-env"
-  DEPLOY_PACKAGE_NAME      : "tjs-application-${{github.sha}}.zip"
   AWS_REGION_NAME          : "us-east-2"
 
 on:
@@ -41,7 +39,7 @@ jobs:
       #   run: npm test 
 
       - name: Create ZIP deployment package
-        run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
+        run: zip -r deploy.zip * -x "**node_modules**"
 
       - name: Get timestamp
         uses: gerred/actions/current-time@master
@@ -54,9 +52,6 @@ jobs:
            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
            aws-region: ${{ env.AWS_REGION_NAME }}
 
-      - name: Copy our Deployment to S3 Bucket
-        run: aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
-
 
       - name: Run beanstalk deploy
         uses: einaregilsson/beanstalk-deploy@v2
@@ -67,7 +62,7 @@ jobs:
           environment_name: env.EB_ENVIRONMENT_NAME
           aws_region: env.AWS_REGION_NAME 
           version_label: "${{ steps.timestamp.outputs.date }}"
-          deployment_package: env.DEPLOY_PACKAGE_NAME 
+          deployment_package: deploy.zip
      
       - name: Deployed!
         run: echo App deployed to ELB  
