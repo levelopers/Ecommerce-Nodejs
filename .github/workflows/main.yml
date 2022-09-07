@@ -61,11 +61,11 @@ jobs:
       - name: Run beanstalk deploy
         uses: einaregilsson/beanstalk-deploy@v2
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: env.EB_APPLICATION_NAME
           environment_name: env.EB_ENVIRONMENT_NAME
-          region: env.AWS_REGION_NAME 
+          aws-region: env.AWS_REGION_NAME 
           version_label: "${{ steps.timestamp.outputs.date }}"
           deployment_package: env.DEPLOY_PACKAGE_NAME 
      
