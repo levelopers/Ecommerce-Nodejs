@@ -1,311 +1,73 @@
-name: Deploy master
+name: CI-CD-Pipeline-to-AWS-ElasticBeanStalk
 
 env:
-  EB_PACKAGE_S3_BUCKET_NAME: "elasticbeanstalk-us-west-1-794105936049"
-  EB_APPLICATION_NAME      : "myecommapp"
-  EB_ENVIRONMENT_NAME      : "Myecommapp-env"
-  DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
-  AWS_REGION_NAME          : "us-west-1"
+  EB_PACKAGE_S3_BUCKET_NAME: "tjs-app"
+  EB_APPLICATION_NAME      : "tjs-application"
+  EB_ENVIRONMENT_NAME      : "tjsapplication-env"
+  DEPLOY_PACKAGE_NAME      : "tjs-app-${{github.sha}}.zip"
+  AWS_REGION_NAME          : "us-east-2"
 
 on:
   push:
-    branches:
-      - master
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  Continuous_Delivery_to_ElasticBeanStalk:
+  build_test_and_deploy:
     runs-on: ubuntu-latest
- 
-
+    strategy:
+      matrix:
+        node: [ 12.x ]
+    
     steps:
-
-    - name: Checkout source code
-      uses: actions/checkout@v1
-
-    - name: Generate deployment package
-      run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
-
-    - name: Configure AWS Credential
-      uses: aws-actions/configure-aws-credentials@v1
-      with: 
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION_NAME }}
-    
-
-    - name: Copy our Deployment to S3 Bucket
-      run: aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
-
-    - name: Create new ElasticBeanstalk Application Version
-      run: |
-        aws elasticbeanstalk create-application-version \
-        --application-name ${{ env.EB_APPLICATION_NAME }} \
-        --source-bundle S3Bucket="${{ env.EB_PACKAGE_S3_BUCKET_NAME }}", S3key="${{ env.DEPLOY_PACKAGE_NAME }}" \
-        --version-label "Ver-${{ github.sha }}" \
-        --description "CommitSHA-${{ github.sha }}"
-
-    - name: Deploy our new Application version
-      run: aws elasticbeanstalk update-environment --environment-name ${{ env.EB_ENVIRONMENT_NAME }} --version-label "Ver-${{ github.sha }}"
-
-    - name: Print nice message on completion of CD Pipeline
-      run: echo "CD pipeline passed successfully"
-
-
-      # uses: einaregilsson/beanstalk-deploy@v20
-      # with:
-      #   aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #   application_name: "myecommapp"
-      #   environment_name: "Myecommapp-env"
-      #   deployment_package:  "ecommerce-app-${{github.sha}}.zip"
-      #   region       : "us-west-1" 
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# name: CI-CD-Pipeline-to-AWS-ElasticBeanStalk
-# env:
-#   EB_PACKAGE_S3_BUCKET_NAME: "zzz-ecommerce-app"
-#   EB_APPLICATION_NAME      : "myecommapp"
-#   EB_ENVIRONMENT_NAME      : "Myecommapp-env"
-#   DEPLOY_PACKAGE_NAME      : "ecommerce-app-${{github.sha}}.zip"
-#   AWS_REGION_NAME          : "us-west-1"
-
-# on:
-#   push:
-#     branches:
-#       - master
-
-# jobs:
-#   my_ci_pipeline:
-#     runs-on: ubuntu-latest
-
-#     # strategy:
-#     #   matrix:
-#     #     node: [ 12.x ]
-    
-#     steps:
-#       - name: Git clone our repository
-#         uses: actions/checkout@v3
-
-#       - name: Setup node 
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: ${{ matrix.node }}
-#           cache: 'npm'
-#         run: npm ci
-#         run: npm run build --if-present
-#         run: npm test
-
-#       - name: Create ZIP deployment package
-#         run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
-
-#       - name: Configure AWS Credentials
-#         uses: aws-actions-configure-aws-credentials@v1
-#         with: 
-#            aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#            aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#            aws-region: ${{ env.AWS_REGION_NAME }}
-
-#       - name: Copy our Deployment to S3 Bucket
-#         run: aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
-
-#       - name: Print nice message on completion of CI Pipeline
-#         echo: "CI Pipeline part finished successfully"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# #       - name: Setup node 
-# #         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-# #         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-# #         application_name: MyApplicationName
-# #         environment_name: MyApplication-Environment
-# #         uses: actions/setup-node@v3
-# #         with:
-# #           node-version: ${{ matrix.node }}
-# #           cache: 'npm'
-# #       - run: npm ci
-# #       - run: npm run build --if-present
-# #       - run: npm test
-
-# # jobs:
-# #   build:
-# #     runs-on: ubuntu-latest
-# #     steps:
-
-# #     - name: Checkout source code
-# #       uses: actions/checkout@v2
-
-# #     - name: Generate deployment package
-# #       run: zip -r deploy.zip . -x '*.git*'
-
-# #     - name: Deploy to EB
-# #       uses: einaregilsson/beanstalk-deploy@v20
-# #       with:
-# #         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-# #         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-# #         application_name: MyApplicationName
-# #         environment_name: MyApplication-Environment
-# #         version_label: 12345
-# #         region: us-west-2
-# #         deployment_package: deploy.zip
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # name: Deploy to Amazon ECS
-
-# # on:
-# #   push:
-# #     branches: [master, dev, staging]
+      - uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Installing NPM
+        run: npm install
       
-# # env:
-# #   AWS_REGION: MY_AWS_REGION                   # set this to your preferred AWS region, e.g. us-west-1
-# #   ECR_REPOSITORY: MY_ECR_REPOSITORY           # set this to your Amazon ECR repository name                # set this to your Amazon ECS cluster name # set this to the path to your Amazon ECS task definition
-# #                                                # file, e.g. .aws/task-definition.json
-# #   CONTAINER_NAME: MY_CONTAINER_NAME           # set this to the name of the container in the
-                                               
+      - name: Linting check
+        run: npm run lint
 
-# # jobs:
-# #   deploy:
-# #     name: Deploy
-# #     runs-on: ubuntu-latest
-# #     needs: [continuous_integration]
-# #     if: github.ref == 'refs/heads/master'
-# #     # environment: production
+      - name: Building application
+        run: npm run build --if-present
 
-# #     steps:
-# #       - name: Checkout
-# #         uses: actions/checkout@v3
+      # - name: Testing application
+      #   run: npm test 
 
-# #       - name: Configure AWS credentials
-# #         uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
-# #         with:
-# #           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-# #           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-# #           aws-region: ${{ env.AWS_REGION }}
+      - name: Create ZIP deployment package
+        run: zip -r ${{env.DEPLOY_PACKAGE_NAME}} ./ -x  *.git*
 
-# #       - name: Login to Amazon ECR
-# #         id: login-ecr
-# #         uses: aws-actions/amazon-ecr-login@v1
+      - name: Get timestamp
+        uses: gerred/actions/current-time@master
+        id: current-time
 
-# #       - name: Build, tag, and push image to Amazon ECR
-# #         id: build-image
-# #         env:
-# #           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-# #           IMAGE_TAG: ${{ github.sha }}
-# #         run: |
-# #           # Build a docker container and
-# #           # push it to ECR so that it can
-# #           # be deployed to ECS.
-# #           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-# #           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      
-# #       # Step 2
-# #       - name: Create CodeDeploy Deployment
-# #         id: deploy
-# #         run: |
-# #           aws deploy create-deployment \
-# #             --application-name application-name \
-# #             --deployment-group-name AppDeploymentGroupName \
-# #             --deployment-config-name CodeDeployDefault.OneAtATime \
-# #             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3 
+        with: 
+           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           aws-region: ${{ env.AWS_REGION_NAME }}
+
+      - name: Copy our Deployment to S3 Bucket
+        run: aws s3 cp ${{ env.DEPLOY_PACKAGE_NAME }} s3://${{ env.EB_PACKAGE_S3_BUCKET_NAME }}/
+
+
+      - name: Run beanstalk deploy
+        uses: einaregilsson/beanstalk-deploy@v2
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: env.EB_APPLICATION_NAME
+          environment_name: env.EB_ENVIRONMENT_NAME
+          region: env.AWS_REGION_NAME 
+          version_label: "${{ steps.timestamp.outputs.date }}"
+          deployment_package: env.DEPLOY_PACKAGE_NAME 
+     
+      - name: Deployed!
+        run: echo App deployed to ELB  
