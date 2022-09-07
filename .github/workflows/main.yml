@@ -43,8 +43,8 @@ jobs:
         run:  zip -r deploy.zip . -x '*.git*'
 
       - name: Get timestamp
-        uses: gerred/actions/current-time@master
-        id: current-time
+        id: timestamp
+        run: echo "::set-output name=date::$(date +'%Y-%m-%dT%H-%M-%S-%3NZ')"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3 
