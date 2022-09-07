@@ -4,7 +4,7 @@ env:
   EB_PACKAGE_S3_BUCKET_NAME: "tjs-app"
   EB_APPLICATION_NAME      : "tjs-application"
   EB_ENVIRONMENT_NAME      : "tjsapplication-env"
-  DEPLOY_PACKAGE_NAME      : "tjs-app-${{github.sha}}.zip"
+  DEPLOY_PACKAGE_NAME      : "tjs-application-${{github.sha}}.zip"
   AWS_REGION_NAME          : "us-east-2"
 
 on:
