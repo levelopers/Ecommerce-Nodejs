@@ -64,5 +64,5 @@ jobs:
           version_label: "${{ steps.timestamp.outputs.date }}"
           deployment_package: deploy.zip
      
-      - name: Deployed!
+      - name: Yippee! Deployed!
         run: echo App deployed to ELB  
