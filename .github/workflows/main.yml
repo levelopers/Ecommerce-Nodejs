@@ -3,7 +3,7 @@ name: CI-CD-Pipeline-to-AWS-ElasticBeanStalk
 env:
   EB_S3_BUCKET_NAME        :  "tjs-app"
   EB_APPLICATION_NAME      : "tjs-application"
-  EB_ENVIRONMENT_NAME      : "tjsapplication-env"
+  EB_ENVIRONMENT_NAME      : "Tjsapplication-env"
   AWS_REGION_NAME          : "us-east-2"
 
 on:
