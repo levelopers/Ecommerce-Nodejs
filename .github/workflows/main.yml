@@ -59,7 +59,7 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: env.EB_APPLICATION_NAME
+          application_name: "tjs-application"
           environment_name: env.EB_ENVIRONMENT_NAME
           aws_region: env.AWS_REGION_NAME 
           version_label: "${{ steps.timestamp.outputs.date }}"
