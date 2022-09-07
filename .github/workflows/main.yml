@@ -1,6 +1,7 @@
 name: CI-CD-Pipeline-to-AWS-ElasticBeanStalk
 
 env:
+  EB_S3_BUCKET_NAME        :  "tjs-app"
   EB_APPLICATION_NAME      : "tjs-application"
   EB_ENVIRONMENT_NAME      : "tjsapplication-env"
   AWS_REGION_NAME          : "us-east-2"
@@ -54,7 +55,7 @@ jobs:
 
 
       - name: Run beanstalk deploy
-        uses: einaregilsson/beanstalk-deploy@v20
+        uses: einaregilsson/beanstalk-deploy@v2
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
