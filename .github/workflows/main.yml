@@ -39,7 +39,7 @@ jobs:
       #   run: npm test 
 
       - name: Create ZIP deployment package
-        run: zip -r deploy.zip * -x "**node_modules**"
+        run:  zip -r deploy.zip . -x '*.git*'
 
       - name: Get timestamp
         uses: gerred/actions/current-time@master
@@ -54,7 +54,7 @@ jobs:
 
 
       - name: Run beanstalk deploy
-        uses: einaregilsson/beanstalk-deploy@v2
+        uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
