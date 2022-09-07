@@ -1,10 +1,10 @@
 name: CI-CD-Pipeline-to-AWS-ElasticBeanStalk
 
-env:
-  EB_S3_BUCKET_NAME        :  "tjs-app"
-  EB_APPLICATION_NAME      : "tjs-application"
-  EB_ENVIRONMENT_NAME      : "Tjsapplication-env"
-  AWS_REGION_NAME          : "us-east-2"
+# env:
+#   EB_S3_BUCKET_NAME        :  "tjs-app"
+#   EB_APPLICATION_NAME      : "tjs-application"
+#   EB_ENVIRONMENT_NAME      : "Tjsapplication-env"
+#   AWS_REGION_NAME          : "us-east-2"
 
 on:
   push:
@@ -51,7 +51,7 @@ jobs:
         with: 
            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           aws-region: ${{ env.AWS_REGION_NAME }}
+           aws-region: "us-east-2"
 
 
       - name: Run beanstalk deploy
@@ -60,8 +60,8 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: "tjs-application"
-          environment_name: env.EB_ENVIRONMENT_NAME
-          aws_region: env.AWS_REGION_NAME 
+          environment_name: "Tjsapplication-env"
+          aws_region: "us-east-2" 
           version_label: "${{ steps.timestamp.outputs.date }}"
           deployment_package: deploy.zip
      
