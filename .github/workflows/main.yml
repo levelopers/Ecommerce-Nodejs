@@ -50,8 +50,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3 
         with: 
-           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
            aws-region: ${{ env.AWS_REGION_NAME }}
 
       - name: Copy our Deployment to S3 Bucket
